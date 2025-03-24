@@ -64,7 +64,18 @@ bool isTc=false;int ctc=1;int ntc=1;void rky_cse();void _tc();
 void run(){_tc();if(isTc)cin>>ntc;for(ctc=1;ctc<=ntc;ctc++)rky_cse();}
 
 //MARK:- Supplimentary Functions===============================================
+vll x,t;
+double tot(double mid){
+    
+    int n=x.size();
 
+    double mx=0;;
+
+    for(int i=0;i<n;i++){
+        mx=max(abs(mid-(double)x[i])+t[i],mx);    
+    }
+    return mx;
+}
 
 
 
@@ -75,5 +86,44 @@ int32_t main(){ ios::sync_with_stdio(0);cin.tie(0);prec();run();}
 void _tc(){                         isTc=true;
 }
 void rky_cse(){
+
+    int n;cin>>n;
+
+    x.assign(n,0);
+
+    for(int i=0;i<n;i++){
+        cin>>x[i];
+    }
+
+    t.assign(n,0);
+    for(int i=0;i<n;i++){
+        cin>>t[i];
+    }
+
+    if(n==1){
+        cout<<x[0]<<ln;
+        return;
+    }
+
+
+    double low=0,high=1e8;
+
+    while(low<=high){
+        double mid=(low+high)/2;
+        double cur=tot(mid);
+        double next=tot(mid+1e-7);
+        if(cur<next){
+            high=mid-1e-7;
+
+        }
+        else{
+            low=mid+1e-7;
+        }
+       
+    }
+    cout<<fixed<<setprecision(6)<<high<<ln;
+
+
+
     
 }
