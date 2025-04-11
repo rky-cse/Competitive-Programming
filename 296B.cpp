@@ -11,8 +11,8 @@ using namespace std;
 #define S                       second
 #define yes                     cout<<"YES"<<ln;
 #define no                      cout<<"NO"<<ln;
-#define ll                      long long
-#define int                     long long
+#define ll                      int
+#define int                     int
 #define i128                    __int128_t
 #define ui128                   __uint128_t
 #define CNT(x)                  __builtin_popcountll(x);
@@ -56,15 +56,83 @@ ll rng(ll mn, ll mx){uniform_int_distribution<ll> dis(mn, mx);return dis(gen);}
 using namespace std;
 
 //MARK:- CONSTANTS=============================================================
-const long long  N = 2e5+7;
+const long long  N = 1e5+7;
 const long long  mod=1e9+7;
 const long long  inf = (ll)(1e18)+7;
 bool isTc=false;int ctc=1;int ntc=1;void rky_cse();void _tc();
 void run(){_tc();if(isTc)cin>>ntc;for(ctc=1;ctc<=ntc;ctc++)rky_cse();}
 
 //MARK:- Supplimentary Functions===============================================
-int n;
-vector<vector<int>>adj;
+int dp[N][10][10][2][2];
+int fun(int i,int d1, int d2, int f1, int f2, string &s,string &t){
+    if(i==s.size() and f1 and f2)return 1;
+    if(i==s.size())return 0;
+    if(dp[i][d1][d2][f1][f2]!=-1)return dp[i][d1][d2][f1][f2];
+    int ans=0;
+    if(s[i]=='?' and t[i]=='?'){
+        for(int j=0;j<10;j++){
+            for(int k=0;k<10;k++){
+                if(j<k){
+                    ans+=fun(i+1,j,k,f1|1,f2,s,t);
+                }
+                if(j>k){
+                    ans+=fun(i+1,j,k,f1,f2|1,s,t);
+                }
+                if(j==k){
+                    ans+=fun(i+1,j,k,f1,f2,s,t);
+                }
+                ans%=mod;
+            }
+        }
+
+    }
+    if(s[i]=='?' and t[i]!='?'){
+        int j=t[i]-'0';
+        for(int k=0;k<10;k++){
+            if(k<j){
+                ans+=fun(i+1,k,j,f1|1,f2,s,t);
+            }
+            if(k>j){
+                ans+=fun(i+1,k,j,f1,f2|1,s,t);
+            }
+            if(k==j){
+                ans+=fun(i+1,k,j,f1,f2,s,t);
+            }
+            ans%=mod;
+        }
+    }
+    if(s[i]!='?' and t[i]=='?'){
+        int j=s[i]-'0';
+        for(int k=0;k<10;k++){
+            if(j<k){
+                ans+=fun(i+1,j,k,f1|1,f2,s,t);
+            }
+            if(j>k){
+                ans+=fun(i+1,j,k,f1,f2|1,s,t);
+            }
+            if(j==k){
+                ans+=fun(i+1,j,k,f1,f2,s,t);
+            }
+            ans%=mod;
+        }
+    }
+    if(s[i]!='?' and t[i]!='?'){
+        int j=s[i]-'0';
+        int k=t[i]-'0';
+        if(j<k){
+            ans+=fun(i+1,j,k,f1|1,f2,s,t);
+        }
+        if(j>k){
+            ans+=fun(i+1,j,k,f1,f2|1,s,t);
+        }
+        if(j==k){
+            ans+=fun(i+1,j,k,f1,f2,s,t);
+        }
+        ans%=mod;
+    }
+    return dp[i][d1][d2][f1][f2]=ans;
+
+}
 
 
 
@@ -72,67 +140,11 @@ void prec(){          }
 
 int32_t main(){ ios::sync_with_stdio(0);cin.tie(0);prec();run();}
 
-void _tc(){                         isTc=true;
+void _tc(){                        // isTc=true;
 }
 void rky_cse(){
-    cin>>n;
-
-    adj.assign(n+1,vector<int>());
-    for(int i=0;i<n-1;i++){
-        int u,v;cin>>u>>v;
-        adj[u].push_back(v);
-        adj[v].push_back(u);
-    }
-    int c0=0,c1=0,c2=0;
-
-    string s;cin>>s;
-
-    for(int i=2;i<=n;i++){
-
-        if(adj[i].size() == 1){
-            if(s[i-1] == '0'){
-                c0++;
-            }else if(s[i-1] == '?'){
-                c2++;
-            }else{
-                c1++;
-            }
-        }
-        
-    }
-
-    int cnt=count(all(s),'?')-c2-(s[0]=='?');
-
-    if(s[0]!='?'){
-
-        int ans=0;
-        if(s[0] == '0'){
-            ans=c1;
-        }else{
-            ans=c0;
-        }
-        ans+=(c2+1)/2;
-        cout<<ans<<ln;
-        return;
-    }
-    else{
-        int ans=max(c0,c1);
-        if(c1==c0 and cnt%2){
-            ans+=(c2+1)/2;
-        }
-        else{
-            ans+=c2/2;
-        }
-        cout<<ans<<ln;
-        return;
-    }
-
-
-
-
-
-    
-
-
-
+    int n;cin>>n;
+    string s,t;cin>>s>>t;
+    memset(dp,-1,sizeof(dp));
+    cout<<fun(0,0,0,0,0,s,t)<<ln;
 }

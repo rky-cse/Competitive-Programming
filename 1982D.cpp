@@ -11,8 +11,7 @@ using namespace std;
 #define S                       second
 #define yes                     cout<<"YES"<<ln;
 #define no                      cout<<"NO"<<ln;
-#define ll                      long long
-#define int                     long long
+#define ll                      int
 #define i128                    __int128_t
 #define ui128                   __uint128_t
 #define CNT(x)                  __builtin_popcountll(x);
@@ -63,8 +62,7 @@ bool isTc=false;int ctc=1;int ntc=1;void rky_cse();void _tc();
 void run(){_tc();if(isTc)cin>>ntc;for(ctc=1;ctc<=ntc;ctc++)rky_cse();}
 
 //MARK:- Supplimentary Functions===============================================
-int n;
-vector<vector<int>>adj;
+
 
 
 
@@ -75,64 +73,105 @@ int32_t main(){ ios::sync_with_stdio(0);cin.tie(0);prec();run();}
 void _tc(){                         isTc=true;
 }
 void rky_cse(){
-    cin>>n;
+    int n,m,k;cin>>n>>m>>k;
 
-    adj.assign(n+1,vector<int>());
-    for(int i=0;i<n-1;i++){
-        int u,v;cin>>u>>v;
-        adj[u].push_back(v);
-        adj[v].push_back(u);
+    vvll a(n+1,vll(m+1,0));
+
+    for(int i=0;i<n;i++){
+        for(int j=0;j<m;j++){
+            cin>>a[i][j];
+        }
     }
-    int c0=0,c1=0,c2=0;
+    vector<string>s(n);
 
-    string s;cin>>s;
-
-    for(int i=2;i<=n;i++){
-
-        if(adj[i].size() == 1){
-            if(s[i-1] == '0'){
-                c0++;
-            }else if(s[i-1] == '?'){
-                c2++;
-            }else{
-                c1++;
+    for(int i=0;i<n;i++)cin>>s[i];
+    vector<vector<int>>b(n,vector<int>(m,0));
+    for(int i=0;i<n;i++){
+        for(int j=0;j<m;j++){
+            if(s[i][j] == '1'){
+                b[i][j] = 1;
+            }
+            else{
+                b[i][j] = -1;
             }
         }
-        
     }
 
-    int cnt=count(all(s),'?')-c2-(s[0]=='?');
+    int tot=0;
 
-    if(s[0]!='?'){
-
-        int ans=0;
-        if(s[0] == '0'){
-            ans=c1;
-        }else{
-            ans=c0;
+    for(int i=0;i<n;i++){
+        for(int j=0;j<m;j++){
+            if(b[i][j] == 1){
+                tot+= a[i][j];
+            }
+            else{
+                tot-= a[i][j];
+            }
         }
-        ans+=(c2+1)/2;
-        cout<<ans<<ln;
+    }
+    if(tot == 0){
+        yes;
         return;
+    }
+
+    vector<vector<int>>pref(n+1,vector<int>(m+1,0));
+
+    for(int i=0;i<n;i++){
+        for(int j=0;j<m;j++){
+            pref[i+1][j+1] = pref[i][j+1] + pref[i+1][j] - pref[i][j] + b[i][j];
+        }
+    }
+
+    set<int>st;
+
+    st.insert(0);
+
+    for(int i=0;i<n;i++){
+        for(int j=0;j<m;j++){
+            if(i-k+1>=0 and j-k+1>=0){
+                int x = pref[i+1][j+1] - pref[i-k+1][j+1] - pref[i+1][j-k+1] + pref[i-k+1][j-k+1];
+                st.insert(abs(x));
+            }
+        }
+    }
+
+    dbg(st,tot)
+
+    vector<int>dp((*--st.end())+1,0);
+    dp[0]=1;
+
+
+
+    int g=0;
+
+    for(auto it:st){
+        if(it>0 and g>0){
+            g = __gcd(g,it);
+        }else if(it>0){
+            g = it;
+        }
+        dp[it] = 1;
+        for(int i=0;i<=(*--st.end());i++){
+            if(i-it>=0){
+                dp[i]|= dp[i-it];
+            }
+        }
+    } 
+    
+    tot=abs(tot);
+
+    dbg(dp)
+    if(tot<=(*--st.end())and dp[tot]){
+        yes;
+    }
+    else if(g>0 and tot%g==0){
+        yes;
     }
     else{
-        int ans=max(c0,c1);
-        if(c1==c0 and cnt%2){
-            ans+=(c2+1)/2;
-        }
-        else{
-            ans+=c2/2;
-        }
-        cout<<ans<<ln;
-        return;
+        no;
     }
 
-
-
-
-
     
-
 
 
 }

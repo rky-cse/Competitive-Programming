@@ -51,88 +51,74 @@ ll rng(ll mn, ll mx){uniform_int_distribution<ll> dis(mn, mx);return dis(gen);}
 //oms ordered_multiset || blf binary lifting || dsu unionbysize|| lsv linear seive
 //lsv linear seive O(n) + pf in O(logn)
 /*------------------------------------------------------------------------------------*/
-
 #include <bits/stdc++.h>
 using namespace std;
-
-//MARK:- CONSTANTS=============================================================
-const long long  N = 2e5+7;
-const long long  mod=1e9+7;
-const long long  inf = (ll)(1e18)+7;
-bool isTc=false;int ctc=1;int ntc=1;void rky_cse();void _tc();
-void run(){_tc();if(isTc)cin>>ntc;for(ctc=1;ctc<=ntc;ctc++)rky_cse();}
-
-//MARK:- Supplimentary Functions===============================================
+ 
+#define ln '\n'
+#define pb push_back
+#define ll long long
+#define int long long
+ 
+const int INF = -1e9;
+ 
 int n;
-vector<vector<int>>adj;
-
-
-
-void prec(){          }
-
-int32_t main(){ ios::sync_with_stdio(0);cin.tie(0);prec();run();}
-
-void _tc(){                         isTc=true;
+vector<vector<int>> adj;
+vector<int> dwn, up;
+ 
+void dfs1(int u, int p){
+    dwn[u]=0;
+    for(auto v: adj[u]){
+        if(v==p) continue;
+        dfs1(v,u);
+        dwn[u]=max(dwn[u], dwn[v]+1);
+    }
 }
-void rky_cse(){
-    cin>>n;
-
-    adj.assign(n+1,vector<int>());
-    for(int i=0;i<n-1;i++){
-        int u,v;cin>>u>>v;
-        adj[u].push_back(v);
-        adj[v].push_back(u);
+ 
+void dfs2(int u, int p){
+    vector<int> ch, vals;
+    for(auto v: adj[u]){
+        if(v==p) continue;
+        ch.pb(v);
+        vals.pb(dwn[v]+1);
     }
-    int c0=0,c1=0,c2=0;
-
-    string s;cin>>s;
-
+    int m = vals.size();
+    vector<int> pre(m), suf(m);
+    for(int i=0;i<m;i++){
+        pre[i] = (i==0? vals[i] : max(pre[i-1], vals[i]));
+    }
+    for(int i=m-1;i>=0;i--){
+        suf[i] = (i==m-1? vals[i] : max(suf[i+1], vals[i]));
+    }
+    for(int i=0;i<m;i++){
+        int v = ch[i];
+        int cand = INF;
+        if(i>0) cand = max(cand, pre[i-1]);
+        if(i<m-1) cand = max(cand, suf[i+1]);
+        int ext = max(up[u]+1, cand);
+        up[v] = ext;
+        dfs2(v,u);
+    }
+}
+ 
+int32_t main(){
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+    cin >> n;
+    adj.assign(n+1, vector<int>());
+    for(int i=1;i<n;i++){
+        int u,v; cin >> u >> v;
+        adj[u].pb(v);
+        adj[v].pb(u);
+    }
+    dwn.assign(n+1,0);
+    up.assign(n+1,0);
+    dfs1(1,0);
+    up[1]=0;
+    dfs2(1,0);
+    int ans = dwn[1];
     for(int i=2;i<=n;i++){
-
-        if(adj[i].size() == 1){
-            if(s[i-1] == '0'){
-                c0++;
-            }else if(s[i-1] == '?'){
-                c2++;
-            }else{
-                c1++;
-            }
-        }
-        
+        ans = max(ans, up[i] + 1 + dwn[i]);
     }
-
-    int cnt=count(all(s),'?')-c2-(s[0]=='?');
-
-    if(s[0]!='?'){
-
-        int ans=0;
-        if(s[0] == '0'){
-            ans=c1;
-        }else{
-            ans=c0;
-        }
-        ans+=(c2+1)/2;
-        cout<<ans<<ln;
-        return;
-    }
-    else{
-        int ans=max(c0,c1);
-        if(c1==c0 and cnt%2){
-            ans+=(c2+1)/2;
-        }
-        else{
-            ans+=c2/2;
-        }
-        cout<<ans<<ln;
-        return;
-    }
-
-
-
-
-
-    
-
-
-
+    cout << ans << ln;
+    return 0;
 }

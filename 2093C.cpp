@@ -63,76 +63,68 @@ bool isTc=false;int ctc=1;int ntc=1;void rky_cse();void _tc();
 void run(){_tc();if(isTc)cin>>ntc;for(ctc=1;ctc<=ntc;ctc++)rky_cse();}
 
 //MARK:- Supplimentary Functions===============================================
-int n;
-vector<vector<int>>adj;
 
 
+vector<bool>prime(N+1,true);
+void SieveOfEratosthenes()
+{
+for (int p = 2; p * p <= N; p++) {
+if (prime[p] == true) {
+for (int i = p * p; i <= N; i += p)
+ prime[i] = false;
+}
+}
+}
 
-void prec(){          }
+void prec(){  
+
+    prime[0]=false;
+    prime[1]=false;
+    SieveOfEratosthenes();
+
+        }
 
 int32_t main(){ ios::sync_with_stdio(0);cin.tie(0);prec();run();}
 
 void _tc(){                         isTc=true;
 }
 void rky_cse(){
-    cin>>n;
+    int n,k;cin>>n>>k;
 
-    adj.assign(n+1,vector<int>());
-    for(int i=0;i<n-1;i++){
-        int u,v;cin>>u>>v;
-        adj[u].push_back(v);
-        adj[v].push_back(u);
-    }
-    int c0=0,c1=0,c2=0;
-
-    string s;cin>>s;
-
-    for(int i=2;i<=n;i++){
-
-        if(adj[i].size() == 1){
-            if(s[i-1] == '0'){
-                c0++;
-            }else if(s[i-1] == '?'){
-                c2++;
-            }else{
-                c1++;
+    if(k==1){
+        if(n==1){
+            no;
+            return;
+        }
+        for(int i=2;i*i<=n;i++){
+            if(n%i==0){
+                no;
+                return;
             }
         }
-        
-    }
-
-    int cnt=count(all(s),'?')-c2-(s[0]=='?');
-
-    if(s[0]!='?'){
-
-        int ans=0;
-        if(s[0] == '0'){
-            ans=c1;
-        }else{
-            ans=c0;
-        }
-        ans+=(c2+1)/2;
-        cout<<ans<<ln;
-        return;
-    }
-    else{
-        int ans=max(c0,c1);
-        if(c1==c0 and cnt%2){
-            ans+=(c2+1)/2;
-        }
-        else{
-            ans+=c2/2;
-        }
-        cout<<ans<<ln;
+        yes;
         return;
     }
 
+    if(k>1){
+        if(n==1){
+            string s="";
 
-
-
-
-    
-
-
-
+            for(int i=0;i<k;i++){
+                s+='1';
+            }
+            n=stoll(s);
+            dbg(n);
+            for(int i=2;i*i<=n;i++){
+                if(n%i==0){
+                    no;
+                    return;
+                }
+            }
+            yes;
+            return;
+        }
+        no;
+        return;
+    }
 }

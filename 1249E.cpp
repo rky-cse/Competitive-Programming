@@ -63,8 +63,34 @@ bool isTc=false;int ctc=1;int ntc=1;void rky_cse();void _tc();
 void run(){_tc();if(isTc)cin>>ntc;for(ctc=1;ctc<=ntc;ctc++)rky_cse();}
 
 //MARK:- Supplimentary Functions===============================================
-int n;
-vector<vector<int>>adj;
+int dp[N][2];
+int n,c;
+
+
+long long fun(int i, int t, vector<pair<int,int>> &a) {
+  
+    if(i == 0) {
+        if(t == 0)
+            return 0;
+        else
+            return c;  
+    }
+    if(dp[i][t] != -1)
+        return dp[i][t];
+    
+    long long ans = inf;
+   
+    if(t == 0) {
+       
+        ans = min(fun(i-1, 0, a) + a[i-1].first, 
+                  fun(i-1, 1, a) + a[i-1].first);
+    } else { 
+     
+        ans = min(fun(i-1, 0, a) + c + a[i-1].second, 
+                  fun(i-1, 1, a) + a[i-1].second);
+    }
+    return dp[i][t] = ans;
+}
 
 
 
@@ -72,67 +98,23 @@ void prec(){          }
 
 int32_t main(){ ios::sync_with_stdio(0);cin.tie(0);prec();run();}
 
-void _tc(){                         isTc=true;
+void _tc(){                        // isTc=true;
 }
 void rky_cse(){
-    cin>>n;
 
-    adj.assign(n+1,vector<int>());
+    cin>>n>>c;
+    vector<pair<int,int>> a(n-1);
     for(int i=0;i<n-1;i++){
-        int u,v;cin>>u>>v;
-        adj[u].push_back(v);
-        adj[v].push_back(u);
+        cin>>a[i].first;
     }
-    int c0=0,c1=0,c2=0;
-
-    string s;cin>>s;
-
-    for(int i=2;i<=n;i++){
-
-        if(adj[i].size() == 1){
-            if(s[i-1] == '0'){
-                c0++;
-            }else if(s[i-1] == '?'){
-                c2++;
-            }else{
-                c1++;
-            }
-        }
-        
+    for(int i=0;i<n-1;i++){
+        cin>>a[i].second;
     }
-
-    int cnt=count(all(s),'?')-c2-(s[0]=='?');
-
-    if(s[0]!='?'){
-
-        int ans=0;
-        if(s[0] == '0'){
-            ans=c1;
-        }else{
-            ans=c0;
-        }
-        ans+=(c2+1)/2;
-        cout<<ans<<ln;
-        return;
+    memset(dp,-1,sizeof(dp));
+    for(int i=0;i<n;i++){
+        cout<<min(fun(i,0,a),fun(i,1,a))<<" ";
     }
-    else{
-        int ans=max(c0,c1);
-        if(c1==c0 and cnt%2){
-            ans+=(c2+1)/2;
-        }
-        else{
-            ans+=c2/2;
-        }
-        cout<<ans<<ln;
-        return;
-    }
-
-
-
-
-
     
 
-
-
+    
 }

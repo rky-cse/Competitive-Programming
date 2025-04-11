@@ -63,8 +63,7 @@ bool isTc=false;int ctc=1;int ntc=1;void rky_cse();void _tc();
 void run(){_tc();if(isTc)cin>>ntc;for(ctc=1;ctc<=ntc;ctc++)rky_cse();}
 
 //MARK:- Supplimentary Functions===============================================
-int n;
-vector<vector<int>>adj;
+
 
 
 
@@ -75,63 +74,98 @@ int32_t main(){ ios::sync_with_stdio(0);cin.tie(0);prec();run();}
 void _tc(){                         isTc=true;
 }
 void rky_cse(){
-    cin>>n;
-
-    adj.assign(n+1,vector<int>());
-    for(int i=0;i<n-1;i++){
-        int u,v;cin>>u>>v;
-        adj[u].push_back(v);
-        adj[v].push_back(u);
+    int n;cin>>n;
+    vll a(n);
+    for(int i=0;i<n;i++){
+        cin>>a[i];
     }
-    int c0=0,c1=0,c2=0;
-
-    string s;cin>>s;
-
-    for(int i=2;i<=n;i++){
-
-        if(adj[i].size() == 1){
-            if(s[i-1] == '0'){
-                c0++;
-            }else if(s[i-1] == '?'){
-                c2++;
-            }else{
-                c1++;
-            }
-        }
-        
+    vll b(n);
+    for(int i=0;i<n;i++){
+        cin>>b[i];
     }
-
-    int cnt=count(all(s),'?')-c2-(s[0]=='?');
-
-    if(s[0]!='?'){
-
-        int ans=0;
-        if(s[0] == '0'){
-            ans=c1;
-        }else{
-            ans=c0;
-        }
-        ans+=(c2+1)/2;
-        cout<<ans<<ln;
-        return;
-    }
-    else{
-        int ans=max(c0,c1);
-        if(c1==c0 and cnt%2){
-            ans+=(c2+1)/2;
-        }
-        else{
-            ans+=c2/2;
-        }
-        cout<<ans<<ln;
+    vll aa=a;
+    vll bb=b;
+    sort(all(aa));
+    sort(all(bb));
+    if(aa!=bb){
+        cout<<-1<<ln;
         return;
     }
 
+    int ct=0;
+    int id=-1;
+    for(int i=0;i<n;i++){
+        if(a[i]==b[i]){
+            id=i;
+            ct++;
+        }
+    }
+    if(ct==n and aa[0]==aa[n-1]){
+        cout<<0<<ln;
+        return;
+    }
+
+    if(ct>1){
+        cout<<-1<<ln;
+        return;
+    }
+    if(ct==1 and n%2==0){
+        cout<<-1<<ln;
+        return;
+    }
+
+    vector<pair<int,int>> ans;
+    if(id!=-1){
+        if(id!=(n/2)){
+            ans.pb({id,n/2});
+            swap(a[id],a[n/2]);
+            swap(b[id],b[n/2]);
+
+        }
+    }
+    dbg(a);
+    dbg(b);
+
+    map<int,int>mp;
+
+    for(int i=0;i<n;i++){
+        mp[b[i]]=i;
+    }
+
+    for(int i=0;i<n;i++){
+        if(a[i]!=b[n-i-1]){
+            int x=mp[a[i]];
+            int y=n-i-1;
+            ans.pb({x,y});
+            swap(a[x],a[y]);
+            swap(b[x],b[y]);
+            mp[b[x]]=x;
+            mp[b[y]]=y;
+
+        }
+    }
+
+    for(int i=0;i<n;i++){
+        if(a[i]!=b[n-i-1]){
+            cout<<-1<<ln;
+            return;
+        }
+    }
+
+    cout<<ans.size()<<ln;
+
+    for(auto [x,y]:ans){
+        cout<<x+1<<" "<<y+1<<ln;
+    }
 
 
 
 
     
+    
+    
+
+
 
 
 

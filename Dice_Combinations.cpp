@@ -63,8 +63,17 @@ bool isTc=false;int ctc=1;int ntc=1;void rky_cse();void _tc();
 void run(){_tc();if(isTc)cin>>ntc;for(ctc=1;ctc<=ntc;ctc++)rky_cse();}
 
 //MARK:- Supplimentary Functions===============================================
-int n;
-vector<vector<int>>adj;
+int fun(vector<int>&dp,int n){
+    if(n<0)return 0;
+    if(n==0)return 1;
+    if(dp[n]!=-1)return dp[n];
+    int ans=0;
+    for(int i=1;i<=6;i++){
+        ans+=fun(dp,n-i);
+        ans%=mod;
+    }
+    return dp[n]=ans;
+}
 
 
 
@@ -72,67 +81,14 @@ void prec(){          }
 
 int32_t main(){ ios::sync_with_stdio(0);cin.tie(0);prec();run();}
 
-void _tc(){                         isTc=true;
+void _tc(){                         //isTc=true;
 }
 void rky_cse(){
-    cin>>n;
+    int n;cin>>n;
+    vector<int>dp(n+1,-1);
+    dp[0]=1;
 
-    adj.assign(n+1,vector<int>());
-    for(int i=0;i<n-1;i++){
-        int u,v;cin>>u>>v;
-        adj[u].push_back(v);
-        adj[v].push_back(u);
-    }
-    int c0=0,c1=0,c2=0;
-
-    string s;cin>>s;
-
-    for(int i=2;i<=n;i++){
-
-        if(adj[i].size() == 1){
-            if(s[i-1] == '0'){
-                c0++;
-            }else if(s[i-1] == '?'){
-                c2++;
-            }else{
-                c1++;
-            }
-        }
-        
-    }
-
-    int cnt=count(all(s),'?')-c2-(s[0]=='?');
-
-    if(s[0]!='?'){
-
-        int ans=0;
-        if(s[0] == '0'){
-            ans=c1;
-        }else{
-            ans=c0;
-        }
-        ans+=(c2+1)/2;
-        cout<<ans<<ln;
-        return;
-    }
-    else{
-        int ans=max(c0,c1);
-        if(c1==c0 and cnt%2){
-            ans+=(c2+1)/2;
-        }
-        else{
-            ans+=c2/2;
-        }
-        cout<<ans<<ln;
-        return;
-    }
-
-
-
-
-
-    
-
-
+    cout<<fun(dp,n)<<ln;
+    // cout<<dp[n]<<ln;
 
 }

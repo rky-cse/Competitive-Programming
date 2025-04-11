@@ -63,8 +63,7 @@ bool isTc=false;int ctc=1;int ntc=1;void rky_cse();void _tc();
 void run(){_tc();if(isTc)cin>>ntc;for(ctc=1;ctc<=ntc;ctc++)rky_cse();}
 
 //MARK:- Supplimentary Functions===============================================
-int n;
-vector<vector<int>>adj;
+
 
 
 
@@ -72,67 +71,45 @@ void prec(){          }
 
 int32_t main(){ ios::sync_with_stdio(0);cin.tie(0);prec();run();}
 
-void _tc(){                         isTc=true;
+void _tc(){                         //isTc=true;
 }
 void rky_cse(){
-    cin>>n;
-
-    adj.assign(n+1,vector<int>());
-    for(int i=0;i<n-1;i++){
-        int u,v;cin>>u>>v;
-        adj[u].push_back(v);
-        adj[v].push_back(u);
+    int n,x;cin>>n>>x;
+    vll a(n);
+    for(int i=0;i<n;i++){
+        cin>>a[i];
     }
-    int c0=0,c1=0,c2=0;
+    vll b(n);
+    for(int i=0;i<n;i++){
+        cin>>b[i];
+    }
+    //vector<vector<int>>dp(n+1,vector<int>(x+1,inf));
+    vector<int>dp(x+1,inf);
+    /*
+    f(i,c)=max(f(i-1,c),f(i-1,c-a[i])+b[i])
+    
+    */
 
-    string s;cin>>s;
+    
 
-    for(int i=2;i<=n;i++){
-
-        if(adj[i].size() == 1){
-            if(s[i-1] == '0'){
-                c0++;
-            }else if(s[i-1] == '?'){
-                c2++;
-            }else{
-                c1++;
+    for(int i=0;i<=x;i++){
+        if(i-a[0]>=0){
+            dp[i]=b[0];
+        }
+        else{
+            dp[i]=0;
+        }
+    }
+    //vector<int>temp(x+1,inf);
+    for(int i=1;i<n;i++){
+        
+        for(int c=x;c>=0;c--){
+            if(c-a[i]>=0){
+                dp[c]=max(dp[c],dp[c-a[i]]+b[i]);
             }
         }
         
     }
 
-    int cnt=count(all(s),'?')-c2-(s[0]=='?');
-
-    if(s[0]!='?'){
-
-        int ans=0;
-        if(s[0] == '0'){
-            ans=c1;
-        }else{
-            ans=c0;
-        }
-        ans+=(c2+1)/2;
-        cout<<ans<<ln;
-        return;
-    }
-    else{
-        int ans=max(c0,c1);
-        if(c1==c0 and cnt%2){
-            ans+=(c2+1)/2;
-        }
-        else{
-            ans+=c2/2;
-        }
-        cout<<ans<<ln;
-        return;
-    }
-
-
-
-
-
-    
-
-
-
+    cout<<dp[x]<<ln;
 }

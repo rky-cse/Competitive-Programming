@@ -63,8 +63,7 @@ bool isTc=false;int ctc=1;int ntc=1;void rky_cse();void _tc();
 void run(){_tc();if(isTc)cin>>ntc;for(ctc=1;ctc<=ntc;ctc++)rky_cse();}
 
 //MARK:- Supplimentary Functions===============================================
-int n;
-vector<vector<int>>adj;
+
 
 
 
@@ -72,67 +71,28 @@ void prec(){          }
 
 int32_t main(){ ios::sync_with_stdio(0);cin.tie(0);prec();run();}
 
-void _tc(){                         isTc=true;
+void _tc(){                         //isTc=true;
 }
 void rky_cse(){
-    cin>>n;
+    int n;cin>>n;
 
-    adj.assign(n+1,vector<int>());
-    for(int i=0;i<n-1;i++){
-        int u,v;cin>>u>>v;
-        adj[u].push_back(v);
-        adj[v].push_back(u);
-    }
-    int c0=0,c1=0,c2=0;
+    int ans=0;
 
-    string s;cin>>s;
-
-    for(int i=2;i<=n;i++){
-
-        if(adj[i].size() == 1){
-            if(s[i-1] == '0'){
-                c0++;
-            }else if(s[i-1] == '?'){
-                c2++;
+    for(int i=1;i<63;i++){
+        int low=0,high=n;
+        while(low<=high){
+            int mid=(low+high)/2;
+            if(mid>(n/(1LL<<i)) or  (1LL<<i)>n or (1LL<<i)*mid>n or(mid != 0 && mid > (n / (1LL<<i)) / mid) or (1LL<<i)*(mid)*(mid)>n){
+                high=mid-1;
             }else{
-                c1++;
+                low=mid+1;
             }
         }
-        
+        dbg(i,low);
+
+        ans+=(low/2);
     }
-
-    int cnt=count(all(s),'?')-c2-(s[0]=='?');
-
-    if(s[0]!='?'){
-
-        int ans=0;
-        if(s[0] == '0'){
-            ans=c1;
-        }else{
-            ans=c0;
-        }
-        ans+=(c2+1)/2;
-        cout<<ans<<ln;
-        return;
-    }
-    else{
-        int ans=max(c0,c1);
-        if(c1==c0 and cnt%2){
-            ans+=(c2+1)/2;
-        }
-        else{
-            ans+=c2/2;
-        }
-        cout<<ans<<ln;
-        return;
-    }
-
-
-
-
-
     
-
-
-
+    cout<<ans<<ln;
+    return;
 }

@@ -58,13 +58,28 @@ using namespace std;
 //MARK:- CONSTANTS=============================================================
 const long long  N = 2e5+7;
 const long long  mod=1e9+7;
-const long long  inf = (ll)(1e18)+7;
+long long  inf = (ll)(1e9)+7;
 bool isTc=false;int ctc=1;int ntc=1;void rky_cse();void _tc();
 void run(){_tc();if(isTc)cin>>ntc;for(ctc=1;ctc<=ntc;ctc++)rky_cse();}
 
 //MARK:- Supplimentary Functions===============================================
-int n;
-vector<vector<int>>adj;
+//vector<vector<vector<int>>>dp;
+vll d,a;
+int n,l,k;
+
+// int fun(int i,int j,int ctk){
+//     if(i>n and ctk<=k) return 0;
+//     if(i>n) return inf;
+
+//     if(dp[i][j][ctk]!=-1) return dp[i][j][ctk]; 
+//     int ans=inf;
+//     ans=min(ans,a[j]*(d[i]-d[i-1])+fun(i+1,j,ctk+1));
+//     ans=min(ans,a[j]*(d[i]-d[i-1])+fun(i+1,i,ctk));
+
+//     return dp[i][j][ctk]=ans; 
+
+// }
+
 
 
 
@@ -72,67 +87,51 @@ void prec(){          }
 
 int32_t main(){ ios::sync_with_stdio(0);cin.tie(0);prec();run();}
 
-void _tc(){                         isTc=true;
+void _tc(){                         //isTc=true;
 }
 void rky_cse(){
-    cin>>n;
 
-    adj.assign(n+1,vector<int>());
-    for(int i=0;i<n-1;i++){
-        int u,v;cin>>u>>v;
-        adj[u].push_back(v);
-        adj[v].push_back(u);
+    cin>>n>>l>>k;
+
+    d.assign(n+1,0);
+    for(int i=0;i<n;i++){
+        cin>>d[i];
     }
-    int c0=0,c1=0,c2=0;
+    d[n]=l;
 
-    string s;cin>>s;
-
-    for(int i=2;i<=n;i++){
-
-        if(adj[i].size() == 1){
-            if(s[i-1] == '0'){
-                c0++;
-            }else if(s[i-1] == '?'){
-                c2++;
-            }else{
-                c1++;
+    a.assign(n+1,0);    
+    for(int i=0;i<n;i++){
+        cin>>a[i];
+    }
+    a[n]=0;
+    vector<vector<int>> nxt(n+2, vector<int>(k+1, inf)), cur(n+2, vector<int>(k+1, inf));
+    for (int j = 0; j <= n; j++){
+        for (int c = 0; c <= k; c++){
+            nxt[j][c] = 0;
+        }
+    }
+    for (int i = n; i >= 1; i--){
+        for (int j = 0; j < i; j++){
+            for (int c = 0; c <= k; c++){
+                int cost = a[j] * (d[i] - d[i-1]);
+                int op1 = (c < k ? nxt[j][c+1] : inf);
+                int op2 = nxt[i][c];
+                cur[j][c] = cost + min(op1, op2);
             }
         }
-        
-    }
-
-    int cnt=count(all(s),'?')-c2-(s[0]=='?');
-
-    if(s[0]!='?'){
-
-        int ans=0;
-        if(s[0] == '0'){
-            ans=c1;
-        }else{
-            ans=c0;
+        for (int j = 0; j < i; j++){
+            for (int c = 0; c <= k; c++){
+                nxt[j][c] = cur[j][c];
+            }
         }
-        ans+=(c2+1)/2;
-        cout<<ans<<ln;
-        return;
     }
-    else{
-        int ans=max(c0,c1);
-        if(c1==c0 and cnt%2){
-            ans+=(c2+1)/2;
-        }
-        else{
-            ans+=c2/2;
-        }
-        cout<<ans<<ln;
-        return;
-    }
+    cout << nxt[0][0];
 
 
 
 
 
     
-
 
 
 }

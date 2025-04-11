@@ -63,9 +63,6 @@ bool isTc=false;int ctc=1;int ntc=1;void rky_cse();void _tc();
 void run(){_tc();if(isTc)cin>>ntc;for(ctc=1;ctc<=ntc;ctc++)rky_cse();}
 
 //MARK:- Supplimentary Functions===============================================
-int n;
-vector<vector<int>>adj;
-
 
 
 void prec(){          }
@@ -75,64 +72,73 @@ int32_t main(){ ios::sync_with_stdio(0);cin.tie(0);prec();run();}
 void _tc(){                         isTc=true;
 }
 void rky_cse(){
-    cin>>n;
+    int n,k,x;cin>>n>>k>>x;
 
-    adj.assign(n+1,vector<int>());
-    for(int i=0;i<n-1;i++){
-        int u,v;cin>>u>>v;
-        adj[u].push_back(v);
-        adj[v].push_back(u);
+
+    vll a(n+1);
+
+
+    for(int i=1;i<=n;i++){
+        cin>>a[i];
+        if(a[i]==-1){
+            a[i]=0;
+        }
+    }  
+    vll b(n+1);
+
+    for(int i=1;i<=n;i++){
+        cin>>b[i];
     }
-    int c0=0,c1=0,c2=0;
 
-    string s;cin>>s;
+    dbg(a,b)
 
-    for(int i=2;i<=n;i++){
+    int l=ceil(log2(n))+1;
 
-        if(adj[i].size() == 1){
-            if(s[i-1] == '0'){
-                c0++;
-            }else if(s[i-1] == '?'){
-                c2++;
-            }else{
-                c1++;
+    vector<vector<int>> dp(n+1,vector<int>(l+1,0));
+    for(int i=1;i<=n;i++){
+        dp[i][0]=a[i];
+    }
+
+    for(int i=1;i<=l;i++){
+        
+        for(int j=1;j<=n;j++){
+            dp[j][i]=dp[dp[j][i-1]][i-1];// binary lifting ke similar
+            //mast sawal banaye ho bhai, maja aa gaya
+        }
+    }
+
+    dbg(dp)
+
+    int i=1;
+
+    while(true){
+        int bck=(k-i+1);
+        if(bck<=0){
+            break;
+        }
+        for(int j=l;j>=0;j--){
+            if((1<<j)<=bck){
+                bck-=(1<<j);
+                x=dp[x][j];
             }
         }
-        
-    }
-
-    int cnt=count(all(s),'?')-c2-(s[0]=='?');
-
-    if(s[0]!='?'){
-
-        int ans=0;
-        if(s[0] == '0'){
-            ans=c1;
-        }else{
-            ans=c0;
+        dbg(x)
+        if(x==0){
+            yes;
+            return;
         }
-        ans+=(c2+1)/2;
-        cout<<ans<<ln;
-        return;
+        x=b[x];
+        i++;
+        dbg(x)
     }
-    else{
-        int ans=max(c0,c1);
-        if(c1==c0 and cnt%2){
-            ans+=(c2+1)/2;
-        }
-        else{
-            ans+=c2/2;
-        }
-        cout<<ans<<ln;
-        return;
-    }
+    no;
 
 
+   
 
 
 
     
-
 
 
 }

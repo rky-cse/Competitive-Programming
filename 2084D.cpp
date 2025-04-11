@@ -63,8 +63,112 @@ bool isTc=false;int ctc=1;int ntc=1;void rky_cse();void _tc();
 void run(){_tc();if(isTc)cin>>ntc;for(ctc=1;ctc<=ntc;ctc++)rky_cse();}
 
 //MARK:- Supplimentary Functions===============================================
-int n;
-vector<vector<int>>adj;
+
+vector<int> par,sz;
+ // don't forget to initialize
+void init(int n){
+    par.assign(n+1,0);
+    sz.assign(n+1,1);
+    for(int i=0;i<=n;i++){
+     par[i]=i;
+    }
+}
+ 
+int findUPar(int v){
+    if(v==par[v])return v;
+    return par[v]=findUPar(par[v]);
+}
+ 
+void unionBySize(int u,int v){
+    u=findUPar(u);
+    v=findUPar(v);
+    if(u==v)return;
+    if(sz[u]>sz[v])swap(u,v);
+    par[u]=v;
+    sz[v]+=sz[u];
+}
+
+int n,m,k;
+vll a(N);
+map<int,int>mp;
+bool ck(int mid){
+    mp.clear();
+    for(int i=0;i<n;i++){
+        a[i]=i%max(mid,k);
+    }
+    
+    for(int i=0;i<n;i++){
+        mp[a[i]]++; 
+    }
+
+    int i=0;
+
+    int ctm=0;
+    int x=0;
+
+    for(int i=mid-1;i<n;i+=mid){
+        x+=mid;
+        if(x>=k){
+            ctm++;
+            for(int j=i;j>i-k;j--){
+                mp[a[j]]--;
+            }
+            x=0;
+        }
+        if(ctm>=m)break;
+
+        
+    }
+    int mex=0;
+    for(int i=0;i<n;i++){
+        if(mp[i]<=0){
+            mex=i;
+            break;
+        }
+    }
+
+    mp.clear();
+    for(int i=0;i<n;i++){
+        mp[a[i]]++;
+    }
+
+    int lj=0;
+    ctm=0;
+
+
+    for(int i=0;i<n;i+=mid){
+        x+=mid;
+        if(x>=k){
+            ctm++;
+            for(int j=lj;j<i;j++){
+                mp[a[j]]--;
+                
+            }
+            x=0;
+        }
+        lj=i;
+        if(ctm>=m)break;
+        
+        
+    }
+
+    for(int i=0;i<n;i++){
+        if(mp[i]==0){
+            mex=min(mex,i);
+            break;
+        }
+    }
+
+
+
+
+
+
+    return mex>=mid;
+
+
+
+}
 
 
 
@@ -75,64 +179,36 @@ int32_t main(){ ios::sync_with_stdio(0);cin.tie(0);prec();run();}
 void _tc(){                         isTc=true;
 }
 void rky_cse(){
-    cin>>n;
+    cin>>n>>m>>k;
+    
 
-    adj.assign(n+1,vector<int>());
-    for(int i=0;i<n-1;i++){
-        int u,v;cin>>u>>v;
-        adj[u].push_back(v);
-        adj[v].push_back(u);
-    }
-    int c0=0,c1=0,c2=0;
+    int low=1,high=n;
 
-    string s;cin>>s;
+    int ct=0;
+    int ans=0;
 
-    for(int i=2;i<=n;i++){
-
-        if(adj[i].size() == 1){
-            if(s[i-1] == '0'){
-                c0++;
-            }else if(s[i-1] == '?'){
-                c2++;
-            }else{
-                c1++;
-            }
+    while(low<=high){
+        int mid=(low+high)/2;
+        if(ck(mid)){
+            ans=max(ans,mid);
+            ct++;
+            low=mid+1;
+        }else{
+            high=mid-1;
         }
+
+        if(ct>100){
+            break;
+        }
+
+
         
     }
 
-    int cnt=count(all(s),'?')-c2-(s[0]=='?');
+    dbg(high);
 
-    if(s[0]!='?'){
-
-        int ans=0;
-        if(s[0] == '0'){
-            ans=c1;
-        }else{
-            ans=c0;
-        }
-        ans+=(c2+1)/2;
-        cout<<ans<<ln;
-        return;
+    for(int i=0;i<n;i++){
+        cout<<i%max(ans,k)<<' ';
     }
-    else{
-        int ans=max(c0,c1);
-        if(c1==c0 and cnt%2){
-            ans+=(c2+1)/2;
-        }
-        else{
-            ans+=c2/2;
-        }
-        cout<<ans<<ln;
-        return;
-    }
-
-
-
-
-
-    
-
-
-
+    cout<<ln;
 }

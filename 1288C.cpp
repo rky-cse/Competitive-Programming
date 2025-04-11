@@ -63,8 +63,37 @@ bool isTc=false;int ctc=1;int ntc=1;void rky_cse();void _tc();
 void run(){_tc();if(isTc)cin>>ntc;for(ctc=1;ctc<=ntc;ctc++)rky_cse();}
 
 //MARK:- Supplimentary Functions===============================================
-int n;
-vector<vector<int>>adj;
+
+int dp[11][1001][1001];
+int n,m;
+
+int f(int i,int la,int lb){
+    if(la<=0 || lb<=0)return 0;
+    if(la>n || lb>n)return 0;
+    if(i==m and la<=lb)return 1;
+    if(i==m)return 0;
+
+    if(dp[i][la][lb]!=-1)return dp[i][la][lb]; 
+    
+    int ans=0;
+
+    ans+=f(i,la+1,lb);
+    ans%=mod;
+    ans+=f(i,la,lb-1);
+    ans%=mod;
+    ans+=f(i+1,la,lb);
+    ans%=mod;
+    ans-=f(i,la+1,lb-1);
+    ans+=mod;
+    ans%=mod;
+
+
+
+    return dp[i][la][lb]=ans;
+
+
+
+}
 
 
 
@@ -72,67 +101,17 @@ void prec(){          }
 
 int32_t main(){ ios::sync_with_stdio(0);cin.tie(0);prec();run();}
 
-void _tc(){                         isTc=true;
+void _tc(){                         //isTc=true;
 }
 void rky_cse(){
-    cin>>n;
+    cin>>n>>m;
+    memset(dp,-1,sizeof(dp));
 
-    adj.assign(n+1,vector<int>());
-    for(int i=0;i<n-1;i++){
-        int u,v;cin>>u>>v;
-        adj[u].push_back(v);
-        adj[v].push_back(u);
-    }
-    int c0=0,c1=0,c2=0;
-
-    string s;cin>>s;
-
-    for(int i=2;i<=n;i++){
-
-        if(adj[i].size() == 1){
-            if(s[i-1] == '0'){
-                c0++;
-            }else if(s[i-1] == '?'){
-                c2++;
-            }else{
-                c1++;
-            }
-        }
-        
-    }
-
-    int cnt=count(all(s),'?')-c2-(s[0]=='?');
-
-    if(s[0]!='?'){
-
-        int ans=0;
-        if(s[0] == '0'){
-            ans=c1;
-        }else{
-            ans=c0;
-        }
-        ans+=(c2+1)/2;
-        cout<<ans<<ln;
-        return;
-    }
-    else{
-        int ans=max(c0,c1);
-        if(c1==c0 and cnt%2){
-            ans+=(c2+1)/2;
-        }
-        else{
-            ans+=c2/2;
-        }
-        cout<<ans<<ln;
-        return;
-    }
-
-
-
+    int ans=0;
+    ans=f(0,1,n);
+    cout<<ans<<ln;
 
 
     
-
-
-
+    
 }

@@ -63,8 +63,88 @@ bool isTc=false;int ctc=1;int ntc=1;void rky_cse();void _tc();
 void run(){_tc();if(isTc)cin>>ntc;for(ctc=1;ctc<=ntc;ctc++)rky_cse();}
 
 //MARK:- Supplimentary Functions===============================================
-int n;
-vector<vector<int>>adj;
+int c(vector<vector<int>> &a, int val) {
+    vector<vector<int>>b(a.size(), vector<int>(a[0].size(), 0));
+    int ct=val;
+
+    for(int i=0;i<a.size();i++){
+        for(int j=0;j<a[0].size();j++){
+            b[i][j]=ct+(i+j);
+            
+        }
+        
+    }
+    int ans1=0;
+    for(int i=0;i<a.size();i++){
+        for(int j=0;j<a[0].size();j++){
+            if(a[i][j]!=b[i][j])ans1++;
+        }
+    }
+    dbg(b);
+    //return ans1;
+
+    int ans2=0;
+    ct=val;
+    for(int i=0;i<a.size();i++){
+        for(int j=0;j<a[0].size();j++){
+           // if(ct<=0)ans2=inf;
+            b[i][j]=ct-(i+j);
+            
+        }
+        ct=b[i][0]-1;
+    }
+    for(int i=0;i<a.size();i++){
+        for(int j=0;j<a[0].size();j++){
+            if(a[i][j]!=b[i][j])ans2++;
+        }
+    }
+    dbg(b);
+    int ans=min(ans1,ans2);
+    ans1=0;
+    ct=val;
+
+    for(int i=0;i<a.size();i++){
+        for(int j=0;j<a[0].size();j++){
+            b[i][j]=ct+(-i+j);
+            
+        }
+        
+    }
+   
+    for(int i=0;i<a.size();i++){
+        for(int j=0;j<a[0].size();j++){
+            if(a[i][j]!=b[i][j])ans1++;
+        }
+    }
+    ans=min(ans,ans1);
+    ans1=0;
+
+    for(int i=0;i<a.size();i++){
+        for(int j=0;j<a[0].size();j++){
+            b[i][j]=ct+(i-j);
+            
+        }
+        
+    }
+  
+    for(int i=0;i<a.size();i++){
+        for(int j=0;j<a[0].size();j++){
+            if(a[i][j]!=b[i][j])ans1++;
+        }
+    }
+    
+    return min(ans1,ans);
+
+    
+
+}
+
+
+
+
+
+
+
 
 
 
@@ -75,64 +155,34 @@ int32_t main(){ ios::sync_with_stdio(0);cin.tie(0);prec();run();}
 void _tc(){                         isTc=true;
 }
 void rky_cse(){
-    cin>>n;
-
-    adj.assign(n+1,vector<int>());
-    for(int i=0;i<n-1;i++){
-        int u,v;cin>>u>>v;
-        adj[u].push_back(v);
-        adj[v].push_back(u);
-    }
-    int c0=0,c1=0,c2=0;
-
-    string s;cin>>s;
-
-    for(int i=2;i<=n;i++){
-
-        if(adj[i].size() == 1){
-            if(s[i-1] == '0'){
-                c0++;
-            }else if(s[i-1] == '?'){
-                c2++;
-            }else{
-                c1++;
-            }
+    int n,m;cin>>n>>m;
+    vvll a(n,vll(m));
+    for(int i=0;i<n;i++){
+        for(int j=0;j<m;j++){
+            cin>>a[i][j];
         }
-        
-    }
-
-    int cnt=count(all(s),'?')-c2-(s[0]=='?');
-
-    if(s[0]!='?'){
-
-        int ans=0;
-        if(s[0] == '0'){
-            ans=c1;
-        }else{
-            ans=c0;
-        }
-        ans+=(c2+1)/2;
-        cout<<ans<<ln;
-        return;
-    }
-    else{
-        int ans=max(c0,c1);
-        if(c1==c0 and cnt%2){
-            ans+=(c2+1)/2;
-        }
-        else{
-            ans+=c2/2;
-        }
-        cout<<ans<<ln;
-        return;
     }
 
 
 
+    int ans=inf;
+  
 
+    for(int i=0;i<n;i++){
+        for(int j=0;j<m;j++){
+            ans=min(ans,c(a,a[i][j]-i-j));
+            ans=min(ans,c(a,a[i][j]-i+j));
+            ans=min(ans,c(a,a[i][j]+i+j));
+            ans=min(ans,c(a,a[i][j]+i-j));
 
+        }
+
+    }
     
 
+
+
+    cout<<ans<<ln;
 
 
 }

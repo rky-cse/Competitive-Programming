@@ -63,8 +63,7 @@ bool isTc=false;int ctc=1;int ntc=1;void rky_cse();void _tc();
 void run(){_tc();if(isTc)cin>>ntc;for(ctc=1;ctc<=ntc;ctc++)rky_cse();}
 
 //MARK:- Supplimentary Functions===============================================
-int n;
-vector<vector<int>>adj;
+
 
 
 
@@ -75,63 +74,149 @@ int32_t main(){ ios::sync_with_stdio(0);cin.tie(0);prec();run();}
 void _tc(){                         isTc=true;
 }
 void rky_cse(){
-    cin>>n;
+    int n;cin>>n;
 
-    adj.assign(n+1,vector<int>());
-    for(int i=0;i<n-1;i++){
-        int u,v;cin>>u>>v;
-        adj[u].push_back(v);
-        adj[v].push_back(u);
-    }
-    int c0=0,c1=0,c2=0;
+    vll a(n);
 
-    string s;cin>>s;
-
-    for(int i=2;i<=n;i++){
-
-        if(adj[i].size() == 1){
-            if(s[i-1] == '0'){
-                c0++;
-            }else if(s[i-1] == '?'){
-                c2++;
-            }else{
-                c1++;
-            }
-        }
-        
+    for(int i=0;i<n;i++){
+        cin>>a[i];
     }
 
-    int cnt=count(all(s),'?')-c2-(s[0]=='?');
+    multiset<int>se,so;
 
-    if(s[0]!='?'){
+    for(int i=0;i<n;i++){
+        if(a[i]%2)so.insert(a[i]);
+        else se.insert(a[i]);
+    }
 
-        int ans=0;
-        if(s[0] == '0'){
-            ans=c1;
-        }else{
-            ans=c0;
-        }
-        ans+=(c2+1)/2;
-        cout<<ans<<ln;
-        return;
+    int mx=0;
+    int mxp=0;
+
+    if(se.empty()){
+        mx = *so.rbegin();
+        mxp = 1;
+        so.erase(--so.end());
+    }
+    else if(so.empty()){
+        mx = *se.rbegin();
+        mxp = 0;
+        se.erase(--se.end());
+    }
+    else if(*se.rbegin() > *so.rbegin()){
+        mx = *se.rbegin();
+        mxp = 0;
+        se.erase(--se.end());
     }
     else{
-        int ans=max(c0,c1);
-        if(c1==c0 and cnt%2){
-            ans+=(c2+1)/2;
+        mx = *so.rbegin();
+        mxp = 1;
+        so.erase(--so.end());
+    }
+    
+
+
+    while(true){
+        if(mxp==0 and so.size()==0){
+            cout<<mx<<ln;
+            return;
+            
+        }
+        if(mxp==1 and se.size()==0){
+            cout<<mx<<ln;
+            return;
+            
+        }
+        if(mxp==0){
+            int tpo=(*so.rbegin());
+
+            if(tpo>2){
+                mx+=tpo-2;
+                se.insert(2);
+                so.erase(--so.end());
+                mxp=mx%2;
+
+            }
+            else{
+                break;
+            }
+            
+
+
+
         }
         else{
-            ans+=c2/2;
+            int tpe=(*se.rbegin());
+            if(tpe>1){
+                mx+=tpe-1;
+                so.insert(1);
+                se.erase(--se.end());
+                mxp=mx%2;
+            }
+            else{
+                break;
+            }
+            
+            
         }
-        cout<<ans<<ln;
-        return;
+        dbg(se)
+        dbg(so)
+        dbg(mx,mxp)
     }
 
 
+    while(true){
+        if(mxp==0 and so.size()==0){
+            cout<<mx<<ln;
+            return;
+            
+        }
+        if(mxp==1 and se.size()==0){
+            cout<<mx<<ln;
+            return;
+            
+        }
+        if(mxp==0){
+            int tpo=(*so.rbegin());
+
+            if(tpo>0){
+                mx+=tpo;
+                so.erase(--so.end());
+                mxp=mx%2;
+
+            }
+            else{
+                break;
+            }
+            
 
 
+
+        }
+        else{
+            int tpe=(*se.rbegin());
+            if(tpe>0){
+                mx+=tpe;
+                se.erase(--se.end());
+                mxp=mx%2;
+            }
+            else{
+                break;
+            }
+            
+            
+        }
+        dbg(se)
+        dbg(so)
+        dbg(mx,mxp)
+    }
 
     
+
+    cout<<mx<<ln;   
+
+
+        
+
 
 
 

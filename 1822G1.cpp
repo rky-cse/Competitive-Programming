@@ -63,8 +63,7 @@ bool isTc=false;int ctc=1;int ntc=1;void rky_cse();void _tc();
 void run(){_tc();if(isTc)cin>>ntc;for(ctc=1;ctc<=ntc;ctc++)rky_cse();}
 
 //MARK:- Supplimentary Functions===============================================
-int n;
-vector<vector<int>>adj;
+
 
 
 
@@ -75,64 +74,47 @@ int32_t main(){ ios::sync_with_stdio(0);cin.tie(0);prec();run();}
 void _tc(){                         isTc=true;
 }
 void rky_cse(){
-    cin>>n;
 
-    adj.assign(n+1,vector<int>());
-    for(int i=0;i<n-1;i++){
-        int u,v;cin>>u>>v;
-        adj[u].push_back(v);
-        adj[v].push_back(u);
+    // ai * b=aj
+    // b=aj/ai
+    // aj*b=ak
+    // aj*aj=ak*ai
+    
+    int n;cin>>n;
+    vll a(n);
+
+    for(int i=0;i<n;i++){
+        cin>>a[i];
     }
-    int c0=0,c1=0,c2=0;
 
-    string s;cin>>s;
+    sort(all(a));
 
-    for(int i=2;i<=n;i++){
+    map<int,int>mp;
 
-        if(adj[i].size() == 1){
-            if(s[i-1] == '0'){
-                c0++;
-            }else if(s[i-1] == '?'){
-                c2++;
-            }else{
-                c1++;
+
+    for(int i=0;i<n;i++){
+        mp[a[i]]++;
+    }
+
+    int ans=0;
+
+    for(auto &it:mp){
+
+        int x=it.F;
+        int xx=x*x;        
+        if(true){
+            for(auto &itt:mp){
+                if(itt.F>it.F){
+                    break;
+                }
+                int y=xx/itt.F;
+                if(y*itt.F==x and mp.find(y)!=mp.end()){
+                    ans=itt.S*mp[y];
+                }
             }
         }
         
     }
 
-    int cnt=count(all(s),'?')-c2-(s[0]=='?');
-
-    if(s[0]!='?'){
-
-        int ans=0;
-        if(s[0] == '0'){
-            ans=c1;
-        }else{
-            ans=c0;
-        }
-        ans+=(c2+1)/2;
-        cout<<ans<<ln;
-        return;
-    }
-    else{
-        int ans=max(c0,c1);
-        if(c1==c0 and cnt%2){
-            ans+=(c2+1)/2;
-        }
-        else{
-            ans+=c2/2;
-        }
-        cout<<ans<<ln;
-        return;
-    }
-
-
-
-
-
-    
-
-
-
+    cout<<ans<<ln;
 }

@@ -63,8 +63,7 @@ bool isTc=false;int ctc=1;int ntc=1;void rky_cse();void _tc();
 void run(){_tc();if(isTc)cin>>ntc;for(ctc=1;ctc<=ntc;ctc++)rky_cse();}
 
 //MARK:- Supplimentary Functions===============================================
-int n;
-vector<vector<int>>adj;
+
 
 
 
@@ -75,64 +74,50 @@ int32_t main(){ ios::sync_with_stdio(0);cin.tie(0);prec();run();}
 void _tc(){                         isTc=true;
 }
 void rky_cse(){
-    cin>>n;
-
-    adj.assign(n+1,vector<int>());
-    for(int i=0;i<n-1;i++){
-        int u,v;cin>>u>>v;
-        adj[u].push_back(v);
-        adj[v].push_back(u);
-    }
-    int c0=0,c1=0,c2=0;
-
-    string s;cin>>s;
-
-    for(int i=2;i<=n;i++){
-
-        if(adj[i].size() == 1){
-            if(s[i-1] == '0'){
-                c0++;
-            }else if(s[i-1] == '?'){
-                c2++;
-            }else{
-                c1++;
+        string s;
+        cin >> s;
+        int n = s.size();
+ 
+        if(n % 2 == 0) {
+            int tot=0;
+            for (char c : s)
+                tot = (tot+ (c-'a')) % 26;
+            if(tot % 2 != 0){
+                cout << -1 << "\n";
+                return;
             }
         }
-        
-    }
-
-    int cnt=count(all(s),'?')-c2-(s[0]=='?');
-
-    if(s[0]!='?'){
-
-        int ans=0;
-        if(s[0] == '0'){
-            ans=c1;
-        }else{
-            ans=c0;
+ 
+        int ans = 0;
+        int o = 0; 
+       
+        for(int i = 0; i < n / 2; i++){
+            int a = s[i] - 'a';
+            int b = s[n-i-1] - 'a';
+            int diff = abs(a-b);
+            
+            int d = min(diff, 26-diff);
+            if(d % 2 == 0){
+                ans+= d/2;
+            } else {
+                ans+= (d - 1)/2;
+                o++;
+            }
         }
-        ans+=(c2+1)/2;
-        cout<<ans<<ln;
-        return;
-    }
-    else{
-        int ans=max(c0,c1);
-        if(c1==c0 and cnt%2){
-            ans+=(c2+1)/2;
+ 
+        int ex=0;
+        if(n % 2 == 0) {
+           
+            if(o%2 != 0){
+                cout<<-1<<"\n";
+                return;
+            }
+            ex=o/2;
+        } else {
+            ex=(o + 1) / 2;
         }
-        else{
-            ans+=c2/2;
-        }
-        cout<<ans<<ln;
-        return;
-    }
-
-
-
-
-
+        ans+=ex;
+ 
+        cout <<ans<< "\n";
     
-
-
-
 }

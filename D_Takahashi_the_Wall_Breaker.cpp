@@ -63,8 +63,7 @@ bool isTc=false;int ctc=1;int ntc=1;void rky_cse();void _tc();
 void run(){_tc();if(isTc)cin>>ntc;for(ctc=1;ctc<=ntc;ctc++)rky_cse();}
 
 //MARK:- Supplimentary Functions===============================================
-int n;
-vector<vector<int>>adj;
+
 
 
 
@@ -72,67 +71,58 @@ void prec(){          }
 
 int32_t main(){ ios::sync_with_stdio(0);cin.tie(0);prec();run();}
 
-void _tc(){                         isTc=true;
+void _tc(){                        // isTc=true;
 }
 void rky_cse(){
-    cin>>n;
 
-    adj.assign(n+1,vector<int>());
-    for(int i=0;i<n-1;i++){
-        int u,v;cin>>u>>v;
-        adj[u].push_back(v);
-        adj[v].push_back(u);
+    int n,m;cin>>n>>m;
+    vector<string> s(n);
+    for(int i=0;i<n;i++){
+        cin>>s[i];
     }
-    int c0=0,c1=0,c2=0;
 
-    string s;cin>>s;
+    int a,b,c,d;
+    cin>>a>>b>>c>>d;
+    a--;b--;c--;d--;
+    priority_queue<pair<int,pair<int,int>>,vector<pair<int,pair<int,int>>>,greater<pair<int,pair<int,int>>>> pq;
+    pq.push({0,{a,b}});
 
-    for(int i=2;i<=n;i++){
+    vector<vector<int>> dist(n,vector<int>(m,INT_MAX));
+    dist[a][b]=0;
+    vector<vector<int>> vis(n,vector<int>(m,0));
+    vector<int> dx={1,0,-1,0};
+    vector<int> dy={0,1,0,-1};
+    while(!pq.empty()){
+        auto it=pq.top();
+        pq.pop();
+        int x=it.second.first;
+        int y=it.second.second;
+        //vis[x][y]=1;
+        for(int i=0;i<4;i++){
+            int nx=x+dx[i];
+            int ny=y+dy[i];
+            if(nx>=0 && nx<n && ny>=0 && ny<m && s[nx][ny]!='#' && dist[nx][ny]>dist[x][y]){
+                dist[nx][ny]=dist[x][y];
+                pq.push({dist[nx][ny],{nx,ny}});
+            }
+            
+            if(nx>=0 && nx<n && ny>=0 && ny<m && dist[nx][ny]>dist[x][y]+1){
+                dist[nx][ny]=dist[x][y]+1;
+                pq.push({dist[nx][ny],{nx,ny}});  
+            }
+            nx+=dx[i];
+            ny+=dy[i];
 
-        if(adj[i].size() == 1){
-            if(s[i-1] == '0'){
-                c0++;
-            }else if(s[i-1] == '?'){
-                c2++;
-            }else{
-                c1++;
+            if(nx>=0 && nx<n && ny>=0 && ny<m  && dist[nx][ny]>dist[x][y]+1){
+                dist[nx][ny]=dist[x][y]+1;
+                pq.push({dist[nx][ny],{nx,ny}});
             }
         }
-        
     }
 
-    int cnt=count(all(s),'?')-c2-(s[0]=='?');
-
-    if(s[0]!='?'){
-
-        int ans=0;
-        if(s[0] == '0'){
-            ans=c1;
-        }else{
-            ans=c0;
-        }
-        ans+=(c2+1)/2;
-        cout<<ans<<ln;
-        return;
-    }
-    else{
-        int ans=max(c0,c1);
-        if(c1==c0 and cnt%2){
-            ans+=(c2+1)/2;
-        }
-        else{
-            ans+=c2/2;
-        }
-        cout<<ans<<ln;
-        return;
-    }
-
-
-
-
+    dbg(dist)
+    cout<<dist[c][d]<<ln;
 
     
-
-
 
 }

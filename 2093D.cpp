@@ -63,9 +63,112 @@ bool isTc=false;int ctc=1;int ntc=1;void rky_cse();void _tc();
 void run(){_tc();if(isTc)cin>>ntc;for(ctc=1;ctc<=ntc;ctc++)rky_cse();}
 
 //MARK:- Supplimentary Functions===============================================
-int n;
-vector<vector<int>>adj;
 
+int gn(int n,int x,int y){
+    int ans=0;
+    if(x==1 and y==1){
+        return 1;
+    }
+    if(x==2 and y==2){
+        return 2;
+    }
+    if(x==2 and y==1){
+        return 3;
+    }
+    if(x==1 and y==2){
+        return 4;
+    }
+    for(int i=n;i>=2;i--){
+        
+        if (x>(1LL<<(i-1)) and y>(1LL<<(i-1))) {
+            
+            ans +=(1LL<<(i-1))*(1LL<<(i-1));
+
+            x -= (1LL<<(i-1));
+
+            y -= (1LL<<(i-1));
+
+        } else if (x>(1LL<<(i-1)) and y<=(1LL<<(i-1))) {
+            ans+= 2LL*(1LL<<(i-1))*(1LL<<(i-1));
+
+            x-=(1LL<<(i-1));
+
+        } else if(x<=(1LL<<(i-1)) and y>(1LL<<(i-1))) { 
+
+
+            ans+=3LL*(1LL<<(i-1))*(1LL<<(i-1));   
+
+            y-=(1LL<<(i-1));
+        }
+        dbg(x,y,ans,i);
+        if(x==1 and y==1){
+            return ans+1;
+        }
+        if(x==2 and y==2){
+            return ans+2;
+        }
+        if(x==2 and y==1){
+            return ans+3;
+        }
+        if(x==1 and y==2){
+            return ans+4;
+        }
+
+
+    }
+
+    
+
+    return ans;
+
+    
+
+}
+
+vector<int>gxy(int n,int d){
+    if(d==1)return {1,1};
+
+    if(d==2)return {2,2};
+
+    if(d==3)return {2,1};
+
+    if(d==4)return {1,2};
+
+
+    int x=1,y=1;
+
+    for(int i=n;i>=2;i--){
+
+        int q = (d-1)/((1LL<<(i-1))*(1LL<<(i-1)));
+        d -= q * ((1LL<<(i-1))*(1LL<<(i-1)));
+
+        if(q==1){
+            x += (1LL<<(i-1));
+            y += (1LL<<(i-1));
+        }
+        if(q==2){
+            x += (1LL<<(i-1));
+        }
+        if(q==3){
+            y += (1LL<<(i-1));
+        }
+        dbg(x,y,d);
+        
+
+        if(d==2)return {x+1,y+1};
+
+        if(d==3)return {x+1,y};
+
+        if(d==4)return {x,y+1};
+
+
+      
+    }
+    
+    return {x,y};
+
+
+}
 
 
 void prec(){          }
@@ -75,64 +178,27 @@ int32_t main(){ ios::sync_with_stdio(0);cin.tie(0);prec();run();}
 void _tc(){                         isTc=true;
 }
 void rky_cse(){
-    cin>>n;
+    int n;cin>>n;
 
-    adj.assign(n+1,vector<int>());
-    for(int i=0;i<n-1;i++){
-        int u,v;cin>>u>>v;
-        adj[u].push_back(v);
-        adj[v].push_back(u);
-    }
-    int c0=0,c1=0,c2=0;
+    int q;cin>>q;
 
-    string s;cin>>s;
+    while(q--){
+        string t;cin>>t;
+        if(t=="->"){
 
-    for(int i=2;i<=n;i++){
+            int x,y;cin>>x>>y;
+            dbg(x,y);
+            int ans=gn(n,x,y);
+            cout<<ans<<ln;
 
-        if(adj[i].size() == 1){
-            if(s[i-1] == '0'){
-                c0++;
-            }else if(s[i-1] == '?'){
-                c2++;
-            }else{
-                c1++;
-            }
-        }
-        
-    }
 
-    int cnt=count(all(s),'?')-c2-(s[0]=='?');
-
-    if(s[0]!='?'){
-
-        int ans=0;
-        if(s[0] == '0'){
-            ans=c1;
-        }else{
-            ans=c0;
-        }
-        ans+=(c2+1)/2;
-        cout<<ans<<ln;
-        return;
-    }
-    else{
-        int ans=max(c0,c1);
-        if(c1==c0 and cnt%2){
-            ans+=(c2+1)/2;
         }
         else{
-            ans+=c2/2;
+            int d;cin>>d;
+            vector<int>xy=gxy(n,d);
+            cout<<xy[0]<<" "<<xy[1]<<ln;
+
+
         }
-        cout<<ans<<ln;
-        return;
-    }
-
-
-
-
-
-    
-
-
-
+    }   
 }
