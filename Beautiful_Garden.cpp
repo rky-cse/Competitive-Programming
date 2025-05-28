@@ -74,51 +74,52 @@ int32_t main(){ ios::sync_with_stdio(0);cin.tie(0);prec();run();}
 void _tc(){                         isTc=true;
 }
 void rky_cse(){
-    int n,m;cin>>n>>m;
+    int n,k,d;cin>>n>>k>>d;
 
-    map<int,int>mp;
     vll a(n);
+
     for(int i=0;i<n;i++){
         cin>>a[i];
-        mp[a[i]]++;
+
     }
 
-  
-    int ct=m;
+    
+
+    
+
+    multiset<pair<int,int>>ms;
+    sort(all(a));
+    for(int i=0;i<n-k;i++){
+        ms.insert({1,a[i]});
+    }
+
+    dbg(ms)
+
     int ans=0;
-    int cur=1;
-    
 
-    
+    for(int i=1;i<=d;i++){
 
-    if(mp.size()<m){
-        cout<<0<<ln;
-        return;
-    }
-
-    auto f=mp.begin();
-
-    for(auto it:mp){
-       
-        cur*=it.S;
-        cur%=mod;
-        ct--;
-        if(ct==0){
-            if(it.F-(f->F)<=m)ans=(ans+cur)%mod;
-            
+        if(ms.empty()){
+            continue;
         }
-        else if(ct<0){
-            cur=cur*modInverse(f->S,mod)%mod;
-            f++;
-            if(it.F-(f->F)<=m-1)ans=(ans+cur)%mod;
-            
 
+        vector<pair<int,int>>v;
+        for(auto it:ms){
+            if(it.F<=i){
+                ans++;
+                v.push_back({it.F,it.S});
+            }
 
         }
+        for(auto it:v){
+            
+            ms.erase(ms.find(it));
+            ms.insert({i+it.S,it.S});
+        }
+
+
     }
-    
 
     cout<<ans<<ln;
-
 
 }

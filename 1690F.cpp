@@ -74,51 +74,69 @@ int32_t main(){ ios::sync_with_stdio(0);cin.tie(0);prec();run();}
 void _tc(){                         isTc=true;
 }
 void rky_cse(){
-    int n,m;cin>>n>>m;
-
-    map<int,int>mp;
+    int n;cin>>n;
+    string s;cin>>s;
     vll a(n);
+
+
+
     for(int i=0;i<n;i++){
         cin>>a[i];
-        mp[a[i]]++;
+        a[i]--;
     }
 
-  
-    int ct=m;
-    int ans=0;
-    int cur=1;
-    
+    vector<int>vis(n,0);
 
-    
+    vector<vector<int>>group;;
 
-    if(mp.size()<m){
-        cout<<0<<ln;
-        return;
-    }
-
-    auto f=mp.begin();
-
-    for(auto it:mp){
-       
-        cur*=it.S;
-        cur%=mod;
-        ct--;
-        if(ct==0){
-            if(it.F-(f->F)<=m)ans=(ans+cur)%mod;
-            
+    for(int i=0;i<n;i++){
+        vector<int>temp;
+        int j=i;
+        while(vis[j]==0){
+            vis[j]=1;
+            temp.push_back(j);
+            j=a[j];
         }
-        else if(ct<0){
-            cur=cur*modInverse(f->S,mod)%mod;
-            f++;
-            if(it.F-(f->F)<=m-1)ans=(ans+cur)%mod;
-            
-
-
-        }
+        if(!temp.size()) continue;
+        group.push_back(temp);
     }
-    
+    dbg(group);
 
-    cout<<ans<<ln;
+    vector<int>need;
 
+
+    for(auto &it:group){
+        string original="";
+        for(auto &i:it){
+            original+=s[i];
+        }
+        int sz=it.size();
+
+        for(int i=1;i<=sz;i++){
+            int f=0;
+            for(int j=0;j<sz;j++){
+                if(original[j]!=original[(j+i)%sz]){
+                    f=1;
+                }
+            }
+            if(f==0){
+                need.push_back(i);
+                break;
+            }
+        }
+        
+    }
+
+    dbg(need);
+
+    int hcf=need[0];
+
+    int lcm=need[0];
+
+    for(auto &it:need){
+        hcf=__gcd(hcf,it);
+        lcm=(lcm*it)/__gcd(lcm,it);
+    }
+    cout<<lcm<<ln;
 
 }

@@ -65,60 +65,54 @@ void run(){_tc();if(isTc)cin>>ntc;for(ctc=1;ctc<=ntc;ctc++)rky_cse();}
 //MARK:- Supplimentary Functions===============================================
 
 
+void dfs(int node, int par, vector<vector<int>> &adj, vector<vector<int>> &dp){
+    int sum = 0;
+    int ans = 0;
+    for(auto child: adj[node]){
+        if(child==par) continue;
+        dfs(child, node, adj, dp);
+        sum += dp[child][0];
+    }
+    dbg(sum,node);
+    int f=0;
+
+    for(auto child: adj[node]){
+        if(child==par) continue;
+        f=1;
+        ans = max(ans, sum - dp[child][0] + dp[child][1]);
+    }
+    if(f==0) dp[node][0]=ans;
+    else dp[node][0]=ans+1;
+    dp[node][1] = sum;
+
+    dbg(dp[node][0], dp[node][1], node);
+}
+
+
 
 
 void prec(){          }
 
 int32_t main(){ ios::sync_with_stdio(0);cin.tie(0);prec();run();}
 
-void _tc(){                         isTc=true;
+void _tc(){                         //isTc=true;
 }
 void rky_cse(){
-    int n,m;cin>>n>>m;
+    int n;cin>>n;
+    vector<vector<int>>adj(n+1,vll());
 
-    map<int,int>mp;
-    vll a(n);
-    for(int i=0;i<n;i++){
-        cin>>a[i];
-        mp[a[i]]++;
+    for(int i=0;i<n-1;i++){
+        int u,v;cin>>u>>v;
+        adj[u].pb(v);
+        adj[v].pb(u);
     }
 
-  
-    int ct=m;
-    int ans=0;
-    int cur=1;
-    
+    vector<vector<int>>dp(n+1,vll(2,0));
+
+    dfs(1,-1,adj,dp);
+    dbg(dp);
+
+    cout<<max(dp[1][0], dp[1][1])<<ln;
 
     
-
-    if(mp.size()<m){
-        cout<<0<<ln;
-        return;
-    }
-
-    auto f=mp.begin();
-
-    for(auto it:mp){
-       
-        cur*=it.S;
-        cur%=mod;
-        ct--;
-        if(ct==0){
-            if(it.F-(f->F)<=m)ans=(ans+cur)%mod;
-            
-        }
-        else if(ct<0){
-            cur=cur*modInverse(f->S,mod)%mod;
-            f++;
-            if(it.F-(f->F)<=m-1)ans=(ans+cur)%mod;
-            
-
-
-        }
-    }
-    
-
-    cout<<ans<<ln;
-
-
 }

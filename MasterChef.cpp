@@ -64,6 +64,154 @@ void run(){_tc();if(isTc)cin>>ntc;for(ctc=1;ctc<=ntc;ctc++)rky_cse();}
 
 //MARK:- Supplimentary Functions===============================================
 
+int n, k;
+ 
+
+bool ck(string &s, int idx){
+    
+
+    dbg(s,idx);
+    string o = s;
+    int ct = 0;
+    int f = 0, f2 = 0, f2i = 0;
+    char c = s[idx];
+
+
+    bool ans=true;
+    
+   
+    for (int i = idx; i < n; i++){
+        if(s[i]==c){
+            ct++;
+        }
+        else{
+            c = s[i];
+            ct = 1;
+        }
+        
+        if(ct >= k){
+            f = 1;
+            reverse(s.begin()+idx, s.begin()+i);
+            break;
+        }
+        
+    }
+
+    dbg(s)
+
+    dbg(f)
+
+    if(f){
+        ct = 0;
+        c = s[0];
+        for (int i = 0; i < n; i++){
+            if(s[i]==c){
+                ct++;
+            }
+            else{
+                c = s[i];
+                ct = 1;
+            }
+            if(ct >= k){
+                return false;
+                
+            }
+        }
+
+
+    }
+    
+
+
+    s = o;
+
+    ct = 0;
+
+    vector<int> v;
+     c=s[idx];
+    for(int i=idx;i<n;i++){
+        if(s[i]==c){
+            ct++;
+
+        }
+        else{
+            v.push_back(ct);
+            c = s[i];
+            ct = 1;
+        }
+        
+    }
+
+    v.push_back(ct);
+
+    vector<int>vv(n,0);
+
+
+     c=s[idx];
+    int j=0;
+    for(int i=idx;i<n;i++){
+        if(s[i]==c){
+            vv[i]=v[j];
+            ct++;
+
+        }
+        else{
+            j++;
+            vv[i]=v[j];
+            c = s[i];
+            ct = 1;
+        }
+        
+    }
+
+
+
+
+    
+
+    for(int i=idx;i<n;i++){
+        if(s[i]!=s[idx] and i+1<n and s[i+1]==s[idx] and vv[i+1]<k-1){
+            f2 = 1;
+            f2i = i+1;
+            break;
+
+        }
+        if(s[i]!=s[idx] and i+1<n and s[i+1]!=s[idx] ){
+            f2 = 1;
+            f2i = i;
+            break;
+
+        }
+        
+    }
+    if(!f2){
+        f2i=n-1;
+        f2=1;
+    }
+  
+    if(f2){
+        reverse(s.begin()+idx, s.begin()+f2i+1);
+    }
+
+    
+
+    dbg(s)
+    ct = 0;
+    c = s[0];
+    for (int i = 0; i < n; i++){
+        if(s[i]==c){
+            ct++;
+        }
+        else{
+            c = s[i];
+            ct = 1;
+        }
+        if(ct >= k){
+            return false;
+        }
+    }
+    return true;
+}
 
 
 
@@ -74,51 +222,35 @@ int32_t main(){ ios::sync_with_stdio(0);cin.tie(0);prec();run();}
 void _tc(){                         isTc=true;
 }
 void rky_cse(){
-    int n,m;cin>>n>>m;
+    cin>>n>>k;
 
-    map<int,int>mp;
-    vll a(n);
+    string s;cin>>s;
+    char c=s[0];
+    int ct=0;
+
     for(int i=0;i<n;i++){
-        cin>>a[i];
-        mp[a[i]]++;
-    }
-
-  
-    int ct=m;
-    int ans=0;
-    int cur=1;
-    
-
-    
-
-    if(mp.size()<m){
-        cout<<0<<ln;
-        return;
-    }
-
-    auto f=mp.begin();
-
-    for(auto it:mp){
-       
-        cur*=it.S;
-        cur%=mod;
-        ct--;
-        if(ct==0){
-            if(it.F-(f->F)<=m)ans=(ans+cur)%mod;
-            
+        if(s[i]==c){
+            ct++;
         }
-        else if(ct<0){
-            cur=cur*modInverse(f->S,mod)%mod;
-            f++;
-            if(it.F-(f->F)<=m-1)ans=(ans+cur)%mod;
-            
+        else{
+            c=s[i];
+            ct=1;
+        }
+
+        if(ct==k){
+            if(ck(s,i)){
+                yes;
+                return;
+            }
+            else{
+                no;
+                return;
+            }
 
 
         }
+        
+
     }
-    
-
-    cout<<ans<<ln;
-
-
+    yes;
 }

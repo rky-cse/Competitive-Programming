@@ -1,9 +1,9 @@
 #include <bits/stdc++.h>
 using namespace std;
-//#include<ext/pb_ds/assoc_container.hpp>
-//#include<ext/pb_ds/tree_policy.hpp>
-//using namespace __gnu_pbds;
-//typedef tree<long long, null_type, less<long long>, rb_tree_tag, tree_order_statistics_node_update> pbds; // find_by_order, order_of_key
+#include<ext/pb_ds/assoc_container.hpp>
+#include<ext/pb_ds/tree_policy.hpp>
+using namespace __gnu_pbds;
+typedef tree<long long, null_type, less<long long>, rb_tree_tag, tree_order_statistics_node_update> pbds; // find_by_order, order_of_key
 
 //MARK:- MACROS================================================================
 #define ln                      '\n'
@@ -74,51 +74,70 @@ int32_t main(){ ios::sync_with_stdio(0);cin.tie(0);prec();run();}
 void _tc(){                         isTc=true;
 }
 void rky_cse(){
-    int n,m;cin>>n>>m;
+    int n;cin>>n;
 
-    map<int,int>mp;
-    vll a(n);
-    for(int i=0;i<n;i++){
-        cin>>a[i];
-        mp[a[i]]++;
+    string s;cin>>s;
+
+    int ct1=0,ct2=0;
+
+    for(int i=0;i<n-1;i++){
+        if(s[i]=='<') ct1++;
+        else ct2++;
     }
+
+    dbg(ct1,ct2);
+
+    int mx=n-ct2+1;
+    int mn=ct1;
+
+
+    set<int>st;
+    for(int i=0;i<n;i++){
+        st.insert(i+1);
+    }
+    if(s[0]=='<'){
+        cout<<mn+1<<' ';
+        st.erase(mn+1);
+        
+    }
+    else{
+        cout<<mx-1<<' ';
+        st.erase(mx-1);
+        
+        
+    }
+
+    for(int i=0;i<n-1;i++)
+    {
+        if(s[i]=='<'){
+            st.erase(mn);
+
+            cout<<mn<<' ';
+            mn--;
+        } 
+        else if(s[i]=='>'){
+            cout<<mx<<' ';
+
+            st.erase(mx);
+            mx++;
+        }
+    }
+
+    //acout<<*st.begin()<<ln;  
+
+
+    
+
+
+    
+    
+
+    
+    cout<<ln;
 
   
-    int ct=m;
-    int ans=0;
-    int cur=1;
+   
     
-
+     
     
-
-    if(mp.size()<m){
-        cout<<0<<ln;
-        return;
-    }
-
-    auto f=mp.begin();
-
-    for(auto it:mp){
-       
-        cur*=it.S;
-        cur%=mod;
-        ct--;
-        if(ct==0){
-            if(it.F-(f->F)<=m)ans=(ans+cur)%mod;
-            
-        }
-        else if(ct<0){
-            cur=cur*modInverse(f->S,mod)%mod;
-            f++;
-            if(it.F-(f->F)<=m-1)ans=(ans+cur)%mod;
-            
-
-
-        }
-    }
-    
-
-    cout<<ans<<ln;
-
-
 }

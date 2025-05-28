@@ -74,51 +74,74 @@ int32_t main(){ ios::sync_with_stdio(0);cin.tie(0);prec();run();}
 void _tc(){                         isTc=true;
 }
 void rky_cse(){
-    int n,m;cin>>n>>m;
+    int n;cin>>n;
 
-    map<int,int>mp;
     vll a(n);
+
+
     for(int i=0;i<n;i++){
-        cin>>a[i];
-        mp[a[i]]++;
+        cin>>a[i]; 
+        a[i]--; 
     }
 
-  
-    int ct=m;
-    int ans=0;
-    int cur=1;
-    
-
-    
-
-    if(mp.size()<m){
-        cout<<0<<ln;
-        return;
+    if(is_sorted(all(a))){
+        cout<<1<<ln;
+        return ;
     }
 
-    auto f=mp.begin();
+    vector<int>vis(n+1);
+    
+    vector<pair<int,int>>v;
 
-    for(auto it:mp){
-       
-        cur*=it.S;
-        cur%=mod;
-        ct--;
-        if(ct==0){
-            if(it.F-(f->F)<=m)ans=(ans+cur)%mod;
-            
+    for(int i=0;i<n;i++){
+        v.pb({a[i],i});
+    }
+
+    sort(all(v));
+
+    vector<set<int>>group;
+
+    dbg(v);
+
+    dbg(a)
+
+    for(int i=0;i<n;i++){
+        if(!vis[i]){
+            if(v[i].S!=i){
+                int j=v[i].S;
+                set<int>st;
+                st.insert(i);
+                vis[i]=1;
+                while(!vis[j]){
+                    st.insert(j);
+                    vis[j]=1;
+                    j=v[j].S;
+                }
+                group.pb(st);
+            }
+
         }
-        else if(ct<0){
-            cur=cur*modInverse(f->S,mod)%mod;
-            f++;
-            if(it.F-(f->F)<=m-1)ans=(ans+cur)%mod;
-            
 
+    }
 
+    int ans = 0;
+    vector<int> g(n);
+    int ct = 0;
+    for(auto &x : group){
+        for(auto &y : x){
+            g[y] = ct;
+        }
+        ans += x.size() - 1;
+        ct++;
+    }
+    int fans = ans + 1;
+    for (int i = 0; i < n - 1; i++){
+        if(g[i] == g[i+1]){
+            fans = ans - 1;
+            break;
         }
     }
-    
-
-    cout<<ans<<ln;
+    cout << fans << ln;
 
 
 }

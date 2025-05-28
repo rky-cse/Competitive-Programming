@@ -32,6 +32,7 @@ using namespace std;
 #endif
 
 vector<long long>fact_dp;
+int cl(int a,int b){ if(a%b)return a/b+1; return a/b; }
 ll power( ll x, ll y, ll p){ ll res = 1; x = x % p; while (y > 0) { if (y & 1) res = (res * x) % p; y = y >> 1; x = (x * x) % p; } return res; }
 ll modInverse(ll n,ll p){ return power(n, p - 2, p); }
 ll factorial( ll num, ll mod){ if( ::fact_dp.size() == 0){ ::fact_dp.push_back( 1); } for( int i = ::fact_dp.size(); i <= num; i++){ ::fact_dp.push_back( ( ::fact_dp[ i - 1] * ( i % mod)) % mod); } return ::fact_dp[ num]; }
@@ -57,7 +58,7 @@ using namespace std;
 
 //MARK:- CONSTANTS=============================================================
 const long long  N = 2e5+7;
-const long long  mod=1e9+7;
+const long long  mod=998244353;
 const long long  inf = (ll)(1e18)+7;
 bool isTc=false;int ctc=1;int ntc=1;void rky_cse();void _tc();
 void run(){_tc();if(isTc)cin>>ntc;for(ctc=1;ctc<=ntc;ctc++)rky_cse();}
@@ -65,60 +66,49 @@ void run(){_tc();if(isTc)cin>>ntc;for(ctc=1;ctc<=ntc;ctc++)rky_cse();}
 //MARK:- Supplimentary Functions===============================================
 
 
+bool cmp(vll &p, vll &q){
+    return p[0]*q[2] > q[0]*p[2];
+}
+
 
 
 void prec(){          }
 
 int32_t main(){ ios::sync_with_stdio(0);cin.tie(0);prec();run();}
 
-void _tc(){                         isTc=true;
+void _tc(){                         //isTc=true;
 }
 void rky_cse(){
-    int n,m;cin>>n>>m;
+    
 
-    map<int,int>mp;
-    vll a(n);
+    int n, k; cin >> n >> k;
+    vll v(n), h(n);
+
+    for(int i=0;i<n;i++) cin >> v[i];
+
+    for(int i=0;i<n;i++) cin >> h[i];
+
+    vector<vector<ll>> a(n, vector<ll>(3));
+
+
     for(int i=0;i<n;i++){
-        cin>>a[i];
-        mp[a[i]]++;
+        a[i][0] = v[i];
+        a[i][1] = h[i];
+        a[i][2] = cl(h[i],k);
     }
+    sort(all(a),cmp);
 
-  
-    int ct=m;
-    int ans=0;
-    int cur=1;
-    
+    int  sum = 0,ans = 0;
 
-    
-
-    if(mp.size()<m){
-        cout<<0<<ln;
-        return;
+    for(int i=0;i<n;i++){
+        sum += a[i][2];
+        sum %= mod;
+        int tmp=(a[i][0]*sum)%mod;
+        ans+=tmp;
+        ans%=mod;
+        
     }
-
-    auto f=mp.begin();
-
-    for(auto it:mp){
-       
-        cur*=it.S;
-        cur%=mod;
-        ct--;
-        if(ct==0){
-            if(it.F-(f->F)<=m)ans=(ans+cur)%mod;
-            
-        }
-        else if(ct<0){
-            cur=cur*modInverse(f->S,mod)%mod;
-            f++;
-            if(it.F-(f->F)<=m-1)ans=(ans+cur)%mod;
-            
-
-
-        }
-    }
-    
-
+    ans++;
+    ans%= mod;
     cout<<ans<<ln;
-
-
 }

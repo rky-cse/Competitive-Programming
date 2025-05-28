@@ -74,51 +74,39 @@ int32_t main(){ ios::sync_with_stdio(0);cin.tie(0);prec();run();}
 void _tc(){                         isTc=true;
 }
 void rky_cse(){
-    int n,m;cin>>n>>m;
+    int n,k;cin>>n>>k;
 
-    map<int,int>mp;
-    vll a(n);
+    int m1=0,m2=0;
     for(int i=0;i<n;i++){
-        cin>>a[i];
-        mp[a[i]]++;
-    }
-
-  
-    int ct=m;
-    int ans=0;
-    int cur=1;
+        int t,d;cin>>t>>d;
+        if(t==1){
+            m1=max(m1,d);
+        }
+        else{
+            m2=max(m2,d);
+        }
+    } 
     
+    if(m1*2>=m2 ){
 
-    
-
-    if(mp.size()<m){
-        cout<<0<<ln;
+        cout<<(k/m1)+(k%m1!=0)<<ln;
         return;
     }
 
-    auto f=mp.begin();
-
-    for(auto it:mp){
-       
-        cur*=it.S;
-        cur%=mod;
-        ct--;
-        if(ct==0){
-            if(it.F-(f->F)<=m)ans=(ans+cur)%mod;
-            
+    if(m2>0){
+        int c=k/m2;
+        int r=k%m2;
+        if(m1>=r and r>0){
+            cout<<2*c+1<<ln;
         }
-        else if(ct<0){
-            cur=cur*modInverse(f->S,mod)%mod;
-            f++;
-            if(it.F-(f->F)<=m-1)ans=(ans+cur)%mod;
-            
-
-
+        else if(r>0){
+            cout<<2*c+2<<ln;
         }
+        else cout<<2*c<<ln; 
+        return;
     }
-    
 
-    cout<<ans<<ln;
-
+    int ans = k/m1 + (k%m1 !=0);
+    cout<<ans<<'\n';
 
 }

@@ -63,7 +63,26 @@ bool isTc=false;int ctc=1;int ntc=1;void rky_cse();void _tc();
 void run(){_tc();if(isTc)cin>>ntc;for(ctc=1;ctc<=ntc;ctc++)rky_cse();}
 
 //MARK:- Supplimentary Functions===============================================
+int n,m;
+vll a,b;
 
+
+
+// int fun(int i, int f,vector<vector<int>>&dp){
+
+//     if(dp[i][f]!=-1){
+//         return dp[i][f];
+//     }
+
+//     int ans=inf;
+
+//     if(f==0){
+
+//     }
+
+
+
+// }
 
 
 
@@ -74,50 +93,85 @@ int32_t main(){ ios::sync_with_stdio(0);cin.tie(0);prec();run();}
 void _tc(){                         isTc=true;
 }
 void rky_cse(){
-    int n,m;cin>>n>>m;
+    cin>>n>>m;
 
-    map<int,int>mp;
-    vll a(n);
+    a.assign(n,0);
+    b.assign(m,0);
+    
+
     for(int i=0;i<n;i++){
         cin>>a[i];
-        mp[a[i]]++;
+    }
+    for(int i=0;i<m;i++){
+        cin>>b[i];
+    }
+    b.pb(inf);
+
+
+    vector<int>pf(n+1,inf),sf(n+1,inf);
+
+    int i=0,j=0;
+
+    while(i<n and j<m){
+        if(a[i]>=b[j]){
+            pf[i]=j;
+            i++;
+            j++;
+        }
+        else if(a[i]<b[j]){
+            pf[i]=j-1;
+            i++;
+        }
+        
     }
 
-  
-    int ct=m;
-    int ans=0;
-    int cur=1;
-    
+    i=n-1;
+    j=m-1;
 
-    
+    while(i>=0 and j>=0){
+        if(a[i]>=b[j]){
+            sf[i]=j;
+            i--;
+            j--;
+        }
+        else if(a[i]<b[j]){
+            sf[i]=j+1;
+            i--;
+        }
+        
+    }
 
-    if(mp.size()<m){
-        cout<<0<<ln;
+    dbg(pf,sf)
+
+    int ans=inf;
+
+    for(int i=0;i<n;i++)
+    {
+        if(pf[i]==m-1){
+            cout<<0<<ln;
+            return;
+        }
+    }
+
+
+   
+    if(sf[0] == 1) ans = min(ans, b[0]);
+    for(int i = 0; i < n-1; i++){
+        if(pf[i]+2==sf[i+1]){
+
+            ans = min(ans,b[pf[i]+1]);
+        }
+
+        dbg(ans,i);
+    }
+    if(pf[n-1]==m-2){
+        ans = min(ans,b[m-1]);
+    }
+
+    if(ans == inf){
+        cout<<-1<<ln;
         return;
-    }
-
-    auto f=mp.begin();
-
-    for(auto it:mp){
-       
-        cur*=it.S;
-        cur%=mod;
-        ct--;
-        if(ct==0){
-            if(it.F-(f->F)<=m)ans=(ans+cur)%mod;
-            
-        }
-        else if(ct<0){
-            cur=cur*modInverse(f->S,mod)%mod;
-            f++;
-            if(it.F-(f->F)<=m-1)ans=(ans+cur)%mod;
-            
-
-
-        }
-    }
-    
-
+    } 
     cout<<ans<<ln;
 
 

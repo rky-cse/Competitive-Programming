@@ -63,7 +63,40 @@ bool isTc=false;int ctc=1;int ntc=1;void rky_cse();void _tc();
 void run(){_tc();if(isTc)cin>>ntc;for(ctc=1;ctc<=ntc;ctc++)rky_cse();}
 
 //MARK:- Supplimentary Functions===============================================
+vector<int>tin,tout,par,lvl;
+int timer=0;
 
+vector<vector<int>>adj;
+vector<vector<int>>dp;
+void dfs(int node,int parent){
+    tin[node]=timer++;
+    par[node]=parent;
+    dp[node][0]=parent;
+    for(int i=1;i<20;i++){
+        dp[node][i]=dp[dp[node][i-1]][i-1];
+    }
+    for(auto child:adj[node]){
+        if(child==parent)continue;
+        lvl[child]=lvl[node]+1;
+        dfs(child,node);
+    }
+    tout[node]=timer++;
+}
+bool isAncestor(int u,int v){
+    if(tin[u]<=tin[v] && tout[u]>=tout[v])return true;
+    return false;
+}
+int lca(int u,int v){
+    if(isAncestor(u,v))return u;
+    if(isAncestor(v,u))return v;
+
+    for(int i=19;i>=0;i--){
+        if(!isAncestor(dp[u][i],v)){
+            u=dp[u][i];
+        }
+    }
+    return dp[u][0];
+}
 
 
 
@@ -71,54 +104,85 @@ void prec(){          }
 
 int32_t main(){ ios::sync_with_stdio(0);cin.tie(0);prec();run();}
 
-void _tc(){                         isTc=true;
+void _tc(){                        /// isTc=true;
 }
 void rky_cse(){
-    int n,m;cin>>n>>m;
-
-    map<int,int>mp;
-    vll a(n);
-    for(int i=0;i<n;i++){
-        cin>>a[i];
-        mp[a[i]]++;
-    }
-
-  
-    int ct=m;
-    int ans=0;
-    int cur=1;
+    int n; 
+    cin >> n;
     
-
-    
-
-    if(mp.size()<m){
-        cout<<0<<ln;
-        return;
+   
+    adj.assign(n+1, vector<int>());
+    for(int i = 0; i < n-1; i++){
+        int u, v; 
+        cin >> u >> v;
+        adj[u].pb(v);
+        adj[v].pb(u);
     }
-
-    auto f=mp.begin();
-
-    for(auto it:mp){
+    
+ 
+    vector<int> vis(n+1, 0);
+    int l = 0;
+    queue<int> q;
+    vis[1] = 1;
+    q.push(1);
+    while(!q.empty()){
+        int node = q.front();
+        q.pop();
+        l = node;
+        for(auto child : adj[node]){
+            if(vis[child]) continue;
+            vis[child] = 1;
+            q.push(child);
+        }
+    }
+    
+    
+    q = queue<int>(); 
+    vis.assign(n+1, 0);
+    vis[l] = 1;
+    q.push(l);
+    int diamLevel = 0;
+    int b = 0;
+    while(!q.empty()){
+        int sz = q.size();
+        while(sz--){
+            int node = q.front();
+            q.pop();
+            b = node;
+            for(auto child : adj[node]){
+                if(vis[child]) continue;
+                vis[child] = 1;
+                q.push(child);
+            }
+        }
+        diamLevel++; 
+    }
+    
+    par.assign(n+1, 0);
+    tin.resize(n+1); tout.resize(n+1);
+    lvl.resize(n+1);
+    dp.assign(n+1, vector<int>(20, 0));
+    for(int i = 0; i <= n; i++){
+        par[i] = i;
+        lvl[i] = 0;
+    }
+    dfs(1, 1);
+    
+    int fans = 0;
+    int c = 0;
+    int d = diamLevel - 1;
+    for (int i = 1; i <= n; i++){
        
-        cur*=it.S;
-        cur%=mod;
-        ct--;
-        if(ct==0){
-            if(it.F-(f->F)<=m)ans=(ans+cur)%mod;
-            
-        }
-        else if(ct<0){
-            cur=cur*modInverse(f->S,mod)%mod;
-            f++;
-            if(it.F-(f->F)<=m-1)ans=(ans+cur)%mod;
-            
-
-
+        if(i == b || i == l) continue;
+        
+        int dist1 = lvl[b] + lvl[i] - 2 * lvl[lca(b, i)];
+        int dist2 = lvl[l] + lvl[i] - 2 * lvl[lca(l, i)]; 
+        int candidate = (dist1 + dist2 + d) / 2;
+        if(candidate > fans){
+            fans = candidate;
+            c = i;
         }
     }
-    
-
-    cout<<ans<<ln;
-
-
+    cout << fans << ln;
+    cout << c << ' ' << b << ' ' << l << ln;
 }

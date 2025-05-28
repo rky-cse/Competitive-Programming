@@ -74,51 +74,61 @@ int32_t main(){ ios::sync_with_stdio(0);cin.tie(0);prec();run();}
 void _tc(){                         isTc=true;
 }
 void rky_cse(){
-    int n,m;cin>>n>>m;
+    int n;cin>>n;
 
-    map<int,int>mp;
-    vll a(n);
-    for(int i=0;i<n;i++){
-        cin>>a[i];
-        mp[a[i]]++;
-    }
+    string s,t;cin>>s>>t;
 
-  
-    int ct=m;
-    int ans=0;
-    int cur=1;
-    
+    vector<int>ans;
 
-    
 
-    if(mp.size()<m){
+    int f=0;
+
+    int idx=-1;
+
+    if(s==t){
         cout<<0<<ln;
         return;
     }
 
-    auto f=mp.begin();
-
-    for(auto it:mp){
-       
-        cur*=it.S;
-        cur%=mod;
-        ct--;
-        if(ct==0){
-            if(it.F-(f->F)<=m)ans=(ans+cur)%mod;
-            
-        }
-        else if(ct<0){
-            cur=cur*modInverse(f->S,mod)%mod;
-            f++;
-            if(it.F-(f->F)<=m-1)ans=(ans+cur)%mod;
-            
-
-
-        }
-    }
     
 
-    cout<<ans<<ln;
+    for(int i=0;i<n;i++){
+        if(s[i]=='1'){
+            f=1;
+            if(idx==-1){
+                idx=i;
+            }
+        }
+        if(f and s[i]=='0'){
+            s[i]='1';
+            ans.pb(i);
+        }
 
+    }
+    if(!f and s!=t){
+        cout<<-1<<ln;
+        return;
+    }
 
+    dbg(s)
+    
+
+    for(int i=n-1;i>idx;i--){
+
+        if(s[i]!=t[i]){
+            s[i]=t[i];
+            ans.pb(i);
+        }
+
+    }
+    if(s!=t){
+        cout<<-1<<ln;
+        return;
+    }
+    cout<<ans.size()<<ln;
+
+    for(auto it:ans){
+        cout<<it<<" ";
+    }
+    cout<<ln;   
 }

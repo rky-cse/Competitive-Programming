@@ -74,51 +74,36 @@ int32_t main(){ ios::sync_with_stdio(0);cin.tie(0);prec();run();}
 void _tc(){                         isTc=true;
 }
 void rky_cse(){
-    int n,m;cin>>n>>m;
+    int n, c; 
+    cin >> n >> c;
+    vector<int> a(n);
+    for(int i = 0; i < n; i++){
+        cin >> a[i];
+    }
+    sort(a.begin(), a.end());
+    int ans = 0;
+    for(int i = 0; i < n; i++){
+        ans += (a[i] / 2);
+        ans++;
+    }
+    vector<int> oc(n+1,0), ec(n+1,0);
 
-    map<int,int>mp;
-    vll a(n);
-    for(int i=0;i<n;i++){
-        cin>>a[i];
-        mp[a[i]]++;
+    int o = 0, e = 0;
+
+    for(int i = 0; i < n; i++){
+        if(a[i] % 2 == 0) e++; else o++;
+        ec[i+1] = e;
+        oc[i+1] = o;
+    }
+    dbg(oc, ec, ans);
+    for(int i = 0; i < n; i++){
+        int y = c;
+        int x = y - a[i];
+        ans+=(y-a[i]+1);
+        
     }
 
-  
-    int ct=m;
-    int ans=0;
-    int cur=1;
-    
-
-    
-
-    if(mp.size()<m){
-        cout<<0<<ln;
-        return;
-    }
-
-    auto f=mp.begin();
-
-    for(auto it:mp){
-       
-        cur*=it.S;
-        cur%=mod;
-        ct--;
-        if(ct==0){
-            if(it.F-(f->F)<=m)ans=(ans+cur)%mod;
-            
-        }
-        else if(ct<0){
-            cur=cur*modInverse(f->S,mod)%mod;
-            f++;
-            if(it.F-(f->F)<=m-1)ans=(ans+cur)%mod;
-            
-
-
-        }
-    }
-    
-
-    cout<<ans<<ln;
-
-
+    ans-=(ec[n]*(ec[n]+1))/2;
+    ans-=(oc[n]*(oc[n]+1))/2;
+    cout << ((c+2) * (c + 1)) / 2 - ans << ln;
 }

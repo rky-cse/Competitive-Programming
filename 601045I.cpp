@@ -74,51 +74,55 @@ int32_t main(){ ios::sync_with_stdio(0);cin.tie(0);prec();run();}
 void _tc(){                         isTc=true;
 }
 void rky_cse(){
-    int n,m;cin>>n>>m;
+    int n,q;cin>>n>>q;
 
-    map<int,int>mp;
     vll a(n);
+
     for(int i=0;i<n;i++){
         cin>>a[i];
+    }
+
+    int p=1;
+
+    map<int,int>mp;
+    for(int i=0;i<n;i++)
+    {
+        p*=a[i];
+        p%=mod;
         mp[a[i]]++;
     }
 
-  
-    int ct=m;
-    int ans=0;
-    int cur=1;
-    
+    while(q--){
+        int t,l,r;cin>>t>>l>>r;
 
-    
+        if(t==1){
 
-    if(mp.size()<m){
-        cout<<0<<ln;
-        return;
-    }
+            vll A(11);
 
-    auto f=mp.begin();
+            for(int i=1;i<=10;i++){
+                cin>>A[i];
+            }
 
-    for(auto it:mp){
-       
-        cur*=it.S;
-        cur%=mod;
-        ct--;
-        if(ct==0){
-            if(it.F-(f->F)<=m)ans=(ans+cur)%mod;
+            map<int,int>nmp;
+
+            for(auto &it:mp){
+                nmp[A[it.F]]+=it.S;
+
+            }
+
+            
+            for(auto &it:nmp){
+
+                p*=(power(it.F,it.S,mod));
+                p%=mod;
+
+
+            }
             
         }
-        else if(ct<0){
-            cur=cur*modInverse(f->S,mod)%mod;
-            f++;
-            if(it.F-(f->F)<=m-1)ans=(ans+cur)%mod;
-            
-
-
+        else{
+            cout<<p<<ln;
         }
     }
-    
-
-    cout<<ans<<ln;
-
 
 }

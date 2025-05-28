@@ -74,51 +74,39 @@ int32_t main(){ ios::sync_with_stdio(0);cin.tie(0);prec();run();}
 void _tc(){                         isTc=true;
 }
 void rky_cse(){
-    int n,m;cin>>n>>m;
+    string s;cin>>s;
 
-    map<int,int>mp;
-    vll a(n);
-    for(int i=0;i<n;i++){
-        cin>>a[i];
-        mp[a[i]]++;
-    }
+    // string a;
+    // a+=s[0];
+    // a+=s[1];
 
-  
-    int ct=m;
-    int ans=0;
-    int cur=1;
-    
+    // string b;
+    // b+=s[2];
+    // b+=s[3];
 
-    
+    // int x=stoi(a);
+    // int y=stoi(b);
 
-    if(mp.size()<m){
-        cout<<0<<ln;
-        return;
-    }
-
-    auto f=mp.begin();
-
-    for(auto it:mp){
-       
-        cur*=it.S;
-        cur%=mod;
-        ct--;
-        if(ct==0){
-            if(it.F-(f->F)<=m)ans=(ans+cur)%mod;
-            
-        }
-        else if(ct<0){
-            cur=cur*modInverse(f->S,mod)%mod;
-            f++;
-            if(it.F-(f->F)<=m-1)ans=(ans+cur)%mod;
-            
+    int z=stoi(s);
+    // if((x+y)*(x+y)==z){
+    //     cout<<x<<' '<<y<<'\n';
+    // }
+    // else{
+    //     cout<<-1<<'\n'; 
+    // }
 
 
+
+    for(int x=0;x<=99;x++){
+        for(int y=0;y<=99;y++){
+            if((x+y)*(x+y)==z){
+                cout<<x<<' '<<y<<'\n';
+                return;
+            }
         }
     }
+
+
     
-
-    cout<<ans<<ln;
-
-
+    cout<<-1<<'\n';
 }

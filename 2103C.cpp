@@ -1,9 +1,9 @@
 #include <bits/stdc++.h>
 using namespace std;
-//#include<ext/pb_ds/assoc_container.hpp>
-//#include<ext/pb_ds/tree_policy.hpp>
-//using namespace __gnu_pbds;
-//typedef tree<long long, null_type, less<long long>, rb_tree_tag, tree_order_statistics_node_update> pbds; // find_by_order, order_of_key
+#include<ext/pb_ds/assoc_container.hpp>
+#include<ext/pb_ds/tree_policy.hpp>
+using namespace __gnu_pbds;
+typedef tree<long long, null_type, less<long long>, rb_tree_tag, tree_order_statistics_node_update> pbds; // find_by_order, order_of_key
 
 //MARK:- MACROS================================================================
 #define ln                      '\n'
@@ -64,6 +64,29 @@ void run(){_tc();if(isTc)cin>>ntc;for(ctc=1;ctc<=ntc;ctc++)rky_cse();}
 
 //MARK:- Supplimentary Functions===============================================
 
+          typedef tree<long long,
+                       null_type,
+                       less_equal<long long>,
+                       rb_tree_tag,
+                       tree_order_statistics_node_update> ordered_multiset;
+
+
+
+
+
+
+
+vll a;
+int n,k;
+
+bool ck1(int  mid){
+
+
+
+
+}
+
+
 
 
 
@@ -74,51 +97,88 @@ int32_t main(){ ios::sync_with_stdio(0);cin.tie(0);prec();run();}
 void _tc(){                         isTc=true;
 }
 void rky_cse(){
-    int n,m;cin>>n>>m;
-
-    map<int,int>mp;
-    vll a(n);
-    for(int i=0;i<n;i++){
-        cin>>a[i];
-        mp[a[i]]++;
+  
+    cin >> n >> k;
+    a.assign(n, 0);
+    for(int i = 0; i < n; i++){
+        cin >> a[i];
     }
 
   
-    int ct=m;
-    int ans=0;
-    int cur=1;
-    
-
-    
-
-    if(mp.size()<m){
-        cout<<0<<ln;
+    if(n == 3){
+        vll t = {a[0], a[1], a[2]};
+        sort(t.begin(), t.end());
+        if(t[1] <= k) yes else no;
         return;
     }
 
-    auto f=mp.begin();
-
-    for(auto it:mp){
-       
-        cur*=it.S;
-        cur%=mod;
-        ct--;
-        if(ct==0){
-            if(it.F-(f->F)<=m)ans=(ans+cur)%mod;
-            
-        }
-        else if(ct<0){
-            cur=cur*modInverse(f->S,mod)%mod;
-            f++;
-            if(it.F-(f->F)<=m-1)ans=(ans+cur)%mod;
-            
+ 
+    int good = 0;
+    for(ll x : a) if(x <= k) good++;
+    if(good < 2){
+        no;
+        return;
+    }
 
 
+    ordered_multiset oms;
+    vector<ll> pref(n), suff(n);
+    for(int i = 0; i < n; i++){
+        oms.insert(a[i]);
+      
+        pref[i] = *oms.find_by_order(i/2);
+    }
+
+ 
+    oms.clear();
+    for(int i = n-1; i >= 0; i--){
+        oms.insert(a[i]);
+        int len = n - i;
+        suff[i] = *oms.find_by_order((len-1)/2);
+    }
+
+  
+    for(int i = 1; i < n-1; i++){
+        int cnt_le = 0;
+        if(a[i] <= k) cnt_le++;
+        if(pref[i-1] <= k) cnt_le++;
+        if(suff[i+1] <= k) cnt_le++;
+        if(cnt_le >= 2){
+            yes;
+            return;
         }
     }
+
     
+    for(int i = 1; i < n-1; i++){
+        if(a[i-1] <= k){
+           
+            ordered_multiset mid;
+            for(int j = i; j < n-1; j++){
+                mid.insert(a[j]);
+                int mlen = j - i + 1;
+                if(*mid.find_by_order((mlen-1)/2) <= k){
+                    yes;
+                    return;
+                }
+            }
+        }
+    }
 
-    cout<<ans<<ln;
+    
+    for(int i = n-2; i >= 1; i--){
+        if(a[i+1] <= k){
+            ordered_multiset mid;
+            for(int j = 1; j <= i; j++){
+                mid.insert(a[j]);
+                int mlen = i - j + 1;
+                if(*mid.find_by_order((mlen-1)/2) <= k){
+                    yes;
+                    return;
+                }
+            }
+        }
+    }
 
-
+    no;
 }

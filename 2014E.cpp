@@ -63,6 +63,38 @@ bool isTc=false;int ctc=1;int ntc=1;void rky_cse();void _tc();
 void run(){_tc();if(isTc)cin>>ntc;for(ctc=1;ctc<=ntc;ctc++)rky_cse();}
 
 //MARK:- Supplimentary Functions===============================================
+int n, m, h;
+vector<int> a;
+vector<vector<pair<int,int>>> adj;
+ 
+void dj(int src, vector<vector<int>>& dist){
+    priority_queue<array<int,3>, vector<array<int,3>>, greater<array<int,3>>> pq;
+    dist[src][0]=0;
+    if(a[src]) dist[src][1]=0; else dist[src][1]=inf;
+    if(a[src]) pq.push({0, src, 1}); else pq.push({0, src, 0});
+    while(!pq.empty()){
+        auto cur = pq.top();
+        pq.pop();
+        int d = cur[0], node = cur[1], f = cur[2];
+        if(d>dist[node][f]) continue;
+        for(auto &edge: adj[node]){
+            int v = edge.first, w = edge.second;
+            if(a[node] || f){
+                if(dist[v][1] > d + (w/2)){
+                    dist[v][1] = d + (w/2);
+                    pq.push({dist[v][1], v, 1});
+                }
+            }
+            else{
+                if(dist[v][0] > d + w){
+                    dist[v][0] = d + w;
+                    pq.push({dist[v][0], v, 0});
+                }
+            }
+        }
+    }
+}
+ 
 
 
 
@@ -74,51 +106,50 @@ int32_t main(){ ios::sync_with_stdio(0);cin.tie(0);prec();run();}
 void _tc(){                         isTc=true;
 }
 void rky_cse(){
-    int n,m;cin>>n>>m;
 
-    map<int,int>mp;
-    vll a(n);
-    for(int i=0;i<n;i++){
-        cin>>a[i];
-        mp[a[i]]++;
+    cin>>n>>m>>h;
+
+    a.assign(n+1,0);
+
+
+    for(int i=0;i<h;i++){
+        int x;cin>>x;
+        a[x]++;
     }
 
-  
-    int ct=m;
-    int ans=0;
-    int cur=1;
-    
+    adj.assign(n+1,vector<pair<int,int>>());
 
-    
+    for(int i=0;i<m;i++){
+        int u,v,w;
+        cin>>u>>v>>w;
+        adj[u].pb({v,w});
+        adj[v].pb({u,w});
+    }
 
-    if(mp.size()<m){
-        cout<<0<<ln;
+    vector<vector<int>>df(n+1,vll(2,inf));
+    vector<vector<int>>dl(n+1,vll(2,inf));
+    dj(1,df);
+    dj(n,dl);
+
+    int ans=inf;
+
+    dbg(df,dl)
+
+    for(int i=1;i<=n;i++){
+
+        ans=min(ans,max(min(df[i][0],df[i][1]),min(dl[i][0],dl[i][1])));
+
+    }
+    if(ans==inf){
+        cout<<-1<<ln;
         return;
     }
-
-    auto f=mp.begin();
-
-    for(auto it:mp){
-       
-        cur*=it.S;
-        cur%=mod;
-        ct--;
-        if(ct==0){
-            if(it.F-(f->F)<=m)ans=(ans+cur)%mod;
-            
-        }
-        else if(ct<0){
-            cur=cur*modInverse(f->S,mod)%mod;
-            f++;
-            if(it.F-(f->F)<=m-1)ans=(ans+cur)%mod;
-            
-
-
-        }
-    }
-    
-
     cout<<ans<<ln;
 
 
+    
+
+  
+
+    
 }

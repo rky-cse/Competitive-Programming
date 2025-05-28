@@ -57,68 +57,72 @@ using namespace std;
 
 //MARK:- CONSTANTS=============================================================
 const long long  N = 2e5+7;
-const long long  mod=1e9+7;
+const long long  mod=998244353;
 const long long  inf = (ll)(1e18)+7;
 bool isTc=false;int ctc=1;int ntc=1;void rky_cse();void _tc();
 void run(){_tc();if(isTc)cin>>ntc;for(ctc=1;ctc<=ntc;ctc++)rky_cse();}
 
 //MARK:- Supplimentary Functions===============================================
 
+int n;
+vll a;
 
+int dp[N][3][3][3];
+
+int fun(int i,int p1,int p2,int f){
+    if(i>=n and p1<=1 and p2<=1 and f) return 1;
+    if(i>=n) return 0;
+
+    if(dp[i][p1][p2][f] != -1) return dp[i][p1][p2][f];
+
+    int ans=0;
+
+    if(p1==2){
+        ans+= fun(i+1,a[i]%2,p2,f);
+    }
+    else if(p2==2){
+        ans+= fun(i+1,p1,a[i]%2,f);
+    }
+
+    if(p1<=1 and p2<=1  and (p1+p2)%2==0){
+        if(a[i]%2==0){
+            ans+=fun(i+1,p2,0,1);
+        }
+        
+    }
+    else if(p1<=1 and p2<=1 and (p2+p1)%2==1){
+        if(a[i]%2==1){
+            ans+=fun(i+1,p2,1,1);
+        }
+    }
+
+    ans+=fun(i+1,p1,p2,f);
+    ans%=mod;
+
+    return dp[i][p1][p2][f]=ans;
+
+}
 
 
 void prec(){          }
 
 int32_t main(){ ios::sync_with_stdio(0);cin.tie(0);prec();run();}
 
-void _tc(){                         isTc=true;
+void _tc(){                         //isTc=true;
 }
 void rky_cse(){
-    int n,m;cin>>n>>m;
+    cin>>n;
+    a.assign(n,0);
 
-    map<int,int>mp;
-    vll a(n);
     for(int i=0;i<n;i++){
         cin>>a[i];
-        mp[a[i]]++;
     }
 
-  
-    int ct=m;
-    int ans=0;
-    int cur=1;
+    memset(dp,-1,sizeof(dp));
+    cout<<fun(0,2,2,0)<<ln;
+
+
+
+
     
-
-    
-
-    if(mp.size()<m){
-        cout<<0<<ln;
-        return;
-    }
-
-    auto f=mp.begin();
-
-    for(auto it:mp){
-       
-        cur*=it.S;
-        cur%=mod;
-        ct--;
-        if(ct==0){
-            if(it.F-(f->F)<=m)ans=(ans+cur)%mod;
-            
-        }
-        else if(ct<0){
-            cur=cur*modInverse(f->S,mod)%mod;
-            f++;
-            if(it.F-(f->F)<=m-1)ans=(ans+cur)%mod;
-            
-
-
-        }
-    }
-    
-
-    cout<<ans<<ln;
-
-
 }

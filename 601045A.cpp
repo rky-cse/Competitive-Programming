@@ -74,51 +74,59 @@ int32_t main(){ ios::sync_with_stdio(0);cin.tie(0);prec();run();}
 void _tc(){                         isTc=true;
 }
 void rky_cse(){
-    int n,m;cin>>n>>m;
+    int n;cin>>n;
 
-    map<int,int>mp;
     vll a(n);
+
     for(int i=0;i<n;i++){
         cin>>a[i];
+    }
+
+    int mx=0,mxi=0;
+
+    map<int,int> mp;
+    for(int i=0;i<n;i++){
         mp[a[i]]++;
     }
 
-  
-    int ct=m;
-    int ans=0;
-    int cur=1;
-    
-
-    
-
-    if(mp.size()<m){
-        cout<<0<<ln;
-        return;
-    }
-
-    auto f=mp.begin();
-
     for(auto it:mp){
-       
-        cur*=it.S;
-        cur%=mod;
-        ct--;
-        if(ct==0){
-            if(it.F-(f->F)<=m)ans=(ans+cur)%mod;
-            
-        }
-        else if(ct<0){
-            cur=cur*modInverse(f->S,mod)%mod;
-            f++;
-            if(it.F-(f->F)<=m-1)ans=(ans+cur)%mod;
-            
-
-
+        if(it.second>=3){
+            cout<<-1<<ln;return;
         }
     }
+    if(mp[mx]>=2){
+        cout<<-1<<ln;return;
+    }
+
+
+
+    for(int i=0;i<n;i++){
+        if(a[i]>mx){
+            mx=a[i];
+            mxi=i;
+        }
+    }
+
+    for(int i=2;i<n-1;i++){
+        if(i==mxi){
+
+        }
+        else{
+            swap(a[i],a[mxi]);
+            vector<int>lf;
+            
+            for(int j=0;j<i;j++){
+                lf.push_back(a[j]);
     
-
-    cout<<ans<<ln;
-
-
+            }
+            vector<int>rt;
+            for(int j=i+1;j<n;j++){
+                rt.push_back(a[j]);
+            }
+            sort(lf.begin(),lf.end());
+            sort(rt.begin(),rt.end(),greater<int>());
+            
+            
+        }
+    }
 }

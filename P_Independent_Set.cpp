@@ -65,60 +65,61 @@ void run(){_tc();if(isTc)cin>>ntc;for(ctc=1;ctc<=ntc;ctc++)rky_cse();}
 //MARK:- Supplimentary Functions===============================================
 
 
+int n;
+vvll adj;
+
+vvll dp;
+
+void dfs(int u,int p){
+
+
+    int sum0=1,sum1=1;
+ 
+    for(auto v:adj[u]){
+        if(v==p) continue; 
+        dfs(v,u);
+        *=dp[u][1]*dp[u][0];
+        dp[v][1]*=dp[u][1];
+        
+        
+    }
+
+    dp[u][0] = sum1+sum0; 
+    dp[u][1] = sum0; 
+
+    
+}
+
+
+
 
 
 void prec(){          }
 
 int32_t main(){ ios::sync_with_stdio(0);cin.tie(0);prec();run();}
 
-void _tc(){                         isTc=true;
+void _tc(){                         //isTc=true;
 }
 void rky_cse(){
-    int n,m;cin>>n>>m;
 
-    map<int,int>mp;
-    vll a(n);
-    for(int i=0;i<n;i++){
-        cin>>a[i];
-        mp[a[i]]++;
+    cin>>n;
+
+    adj.assign(n+1, vll());
+
+    for(int i=0;i<n-1;i++){
+        int u,v;cin>>u>>v;
+        u--;v--;
+        adj[u].pb(v);
+        adj[v].pb(u);
     }
 
-  
-    int ct=m;
-    int ans=0;
-    int cur=1;
-    
+    dp.assign(n, vll(2, 0));
+    dfs(0, -1);
+
+    dbg(dp)
+
+    int ans = dp[0][1] + dp[0][0];
+    cout << ans << ln;
 
     
-
-    if(mp.size()<m){
-        cout<<0<<ln;
-        return;
-    }
-
-    auto f=mp.begin();
-
-    for(auto it:mp){
-       
-        cur*=it.S;
-        cur%=mod;
-        ct--;
-        if(ct==0){
-            if(it.F-(f->F)<=m)ans=(ans+cur)%mod;
-            
-        }
-        else if(ct<0){
-            cur=cur*modInverse(f->S,mod)%mod;
-            f++;
-            if(it.F-(f->F)<=m-1)ans=(ans+cur)%mod;
-            
-
-
-        }
-    }
-    
-
-    cout<<ans<<ln;
-
-
 }

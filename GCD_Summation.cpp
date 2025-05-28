@@ -56,7 +56,7 @@ ll rng(ll mn, ll mx){uniform_int_distribution<ll> dis(mn, mx);return dis(gen);}
 using namespace std;
 
 //MARK:- CONSTANTS=============================================================
-const long long  N = 2e5+7;
+const long long  N = 1e7+1;
 const long long  mod=1e9+7;
 const long long  inf = (ll)(1e18)+7;
 bool isTc=false;int ctc=1;int ntc=1;void rky_cse();void _tc();
@@ -64,61 +64,95 @@ void run(){_tc();if(isTc)cin>>ntc;for(ctc=1;ctc<=ntc;ctc++)rky_cse();}
 
 //MARK:- Supplimentary Functions===============================================
 
+vector<bool>prime(N+1,true);
+void SieveOfEratosthenes()
+{
+    for (int p = 2; p * p <= N; p++) {
+        if (prime[p] == true) {
+        for (int i = p * p; i <= N; i += p)
+            prime[i] = false;
+        }
+    }
+}
+
+vector<int>p;
 
 
 
-void prec(){          }
+
+void prec(){ 
+
+
+    SieveOfEratosthenes();
+    prime[0]=false;
+    prime[1]=false;
+
+
+    for(int i=0;i<=N;i++){
+        if(prime[i]){
+            p.pb(i);
+
+        }
+
+    }
+}
 
 int32_t main(){ ios::sync_with_stdio(0);cin.tie(0);prec();run();}
 
 void _tc(){                         isTc=true;
 }
 void rky_cse(){
-    int n,m;cin>>n>>m;
+    int n,k;cin>>n>>k;
 
-    map<int,int>mp;
     vll a(n);
-    for(int i=0;i<n;i++){
-        cin>>a[i];
-        mp[a[i]]++;
-    }
-
-  
-    int ct=m;
-    int ans=0;
-    int cur=1;
-    
 
     
 
-    if(mp.size()<m){
-        cout<<0<<ln;
+    int rem=k-(n-2);
+
+    if(rem<=0){
+        cout<<-1<<ln;
         return;
     }
 
-    auto f=mp.begin();
-
-    for(auto it:mp){
-       
-        cur*=it.S;
-        cur%=mod;
-        ct--;
-        if(ct==0){
-            if(it.F-(f->F)<=m)ans=(ans+cur)%mod;
-            
-        }
-        else if(ct<0){
-            cur=cur*modInverse(f->S,mod)%mod;
-            f++;
-            if(it.F-(f->F)<=m-1)ans=(ans+cur)%mod;
-            
+    // for(int i=0;i<10;i++){
+    //     cout<<p[i]<<' ';
+    // }
 
 
-        }
+    int l=n-2;
+
+
+    for(int i=0;i<n-2;i++){
+        a[i]=l--;
     }
-    
 
-    cout<<ans<<ln;
+    // int np=lower_bound(all(p),n-1)-p.begin();
+
+    // dbg(p[np],rem)
+
+    // int hcf=(p[np]*rem)/gcd(p[np],rem);
+    // dbg(hcf)
+
+
+    a[n-2]=rem;
+    a[n-1]=rem*2;
+
+    l=a[n-1]+1;
+
+    for(int i=n-3;i>=0;i--){
+        a[i]=l++;
+    }
+
+
+    for(int i=0;i<n;i++){
+        cout<<a[i]<<" ";
+    }
+
+
+
+    
+    cout<<ln;
 
 
 }

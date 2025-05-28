@@ -74,51 +74,79 @@ int32_t main(){ ios::sync_with_stdio(0);cin.tie(0);prec();run();}
 void _tc(){                         isTc=true;
 }
 void rky_cse(){
-    int n,m;cin>>n>>m;
-
-    map<int,int>mp;
-    vll a(n);
-    for(int i=0;i<n;i++){
-        cin>>a[i];
-        mp[a[i]]++;
+    int n, a, b; cin >> n >> a >> b;
+    vector<vector<pair<int,int>>> adj(n+1);
+    for(int i=0;i<n-1;i++){
+        int u,v,w; cin >> u >> v >> w;
+        adj[u].pb({v,w});
+        adj[v].pb({u,w});
     }
-
-  
-    int ct=m;
-    int ans=0;
-    int cur=1;
-    
-
-    
-
-    if(mp.size()<m){
-        cout<<0<<ln;
+    vector<int> vis(n+1,0);
+    vector<int> full(n+1,0);
+    {
+        queue<pair<int,int>> qu;
+        qu.push({a,0});
+        vis[a] = 1;
+        while(!qu.empty()){
+            auto cur = qu.front();
+            qu.pop();
+            int node = cur.first, xr = cur.second;
+            full[node] = xr;
+            for(auto it : adj[node]){
+                if(!vis[it.first]){
+                    vis[it.first]=1;
+                    qu.push({it.first, xr ^ it.second});
+                }
+            }
+        }
+    }
+    if(full[b]==0){
+        cout<<"YES"<<ln;
         return;
     }
-
-    auto f=mp.begin();
-
-    for(auto it:mp){
-       
-        cur*=it.S;
-        cur%=mod;
-        ct--;
-        if(ct==0){
-            if(it.F-(f->F)<=m)ans=(ans+cur)%mod;
-            
-        }
-        else if(ct<0){
-            cur=cur*modInverse(f->S,mod)%mod;
-            f++;
-            if(it.F-(f->F)<=m-1)ans=(ans+cur)%mod;
-            
-
-
+    set<int> S;
+    S.insert(0);
+    {
+        vector<int> visA(n+1,0);
+        queue<pair<int,int>> qu;
+        qu.push({a,0});
+        visA[a]=1;
+        while(!qu.empty()){
+            auto cur = qu.front();
+            qu.pop();
+            int node = cur.first, xr = cur.second;
+            for(auto it: adj[node]){
+                if(it.first==b) continue;
+                if(!visA[it.first]){
+                    visA[it.first]=1;
+                    int nx = xr ^ it.second;
+                    S.insert(nx);
+                    qu.push({it.first, nx});
+                }
+            }
         }
     }
-    
-
-    cout<<ans<<ln;
-
-
+    {
+        vector<int> visB(n+1,0);
+        queue<pair<int,int>> qu;
+        qu.push({b,0});
+        visB[b]=1;
+        while(!qu.empty()){
+            auto cur = qu.front();
+            qu.pop();
+            int node = cur.first, xr = cur.second;
+            for(auto it: adj[node]){
+                if(!visB[it.first]){
+                    visB[it.first]=1;
+                    int nx = xr ^ it.second;
+                    if(S.count(nx)){
+                        cout<<"YES"<<ln;
+                        return;
+                    }
+                    qu.push({it.first, nx});
+                }
+            }
+        }
+    }
+    cout<<"NO"<<ln;
 }

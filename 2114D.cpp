@@ -74,51 +74,116 @@ int32_t main(){ ios::sync_with_stdio(0);cin.tie(0);prec();run();}
 void _tc(){                         isTc=true;
 }
 void rky_cse(){
-    int n,m;cin>>n>>m;
+    int n;cin>>n;
 
-    map<int,int>mp;
-    vll a(n);
+
+    vll x(n),y(n);
+
     for(int i=0;i<n;i++){
-        cin>>a[i];
-        mp[a[i]]++;
+        cin>>x[i]>>y[i];
     }
 
-  
-    int ct=m;
-    int ans=0;
-    int cur=1;
+    set<pair<int,int>>st;
+
+    int xmin=inf,xmax=1,
+        ymin=inf,ymax=1;
+
+    int mnx=inf,mxx=1;
+
+    for(int i=0;i<n;i++){
+        mnx=min(mnx,x[i]);
+        mxx=max(mxx,x[i]);
     
+    }
+    xmin=mnx;
+    xmax=mxx;
+    
+
+    int mny=inf,mxy=1;  
+
+    for(int i=0;i<n;i++){
+        if(x[i]==mnx){
+            mny=min(mny,y[i]);
+        }
+        if(x[i]==mxx){
+            mxy=max(mxy,y[i]);
+        }
+    }
+
+    st.insert({xmin,mny});
+    st.insert({xmax,mxy});
+
+    mny=inf,mxy=1;
+
+    for(int i=0;i<n;i++){
+        mny=min(mny,y[i]);
+        mxy=max(mxy,y[i]);
+
+    }
+
+    ymin=mny;
+    ymax=mxy;
 
     
 
-    if(mp.size()<m){
-        cout<<0<<ln;
+    mnx=inf,mxx=1;
+    for(int i=0;i<n;i++){
+        if(y[i]==mny){
+            mnx=min(mnx,x[i]);
+        }
+        if(y[i]==mxy){
+            mxx=max(mxx,x[i]);
+        }
+    }
+
+    st.insert({mnx,ymin});
+    st.insert({mxx,ymax});
+    
+
+    dbg(st)
+
+
+    if(n==1){
+        cout<<1<<ln;
         return;
     }
 
-    auto f=mp.begin();
+    int ans=(xmax-xmin+1) * (ymax-ymin+1);
 
-    for(auto it:mp){
-       
-        cur*=it.S;
-        cur%=mod;
-        ct--;
-        if(ct==0){
-            if(it.F-(f->F)<=m)ans=(ans+cur)%mod;
-            
-        }
-        else if(ct<0){
-            cur=cur*modInverse(f->S,mod)%mod;
-            f++;
-            if(it.F-(f->F)<=m-1)ans=(ans+cur)%mod;
-            
-
-
-        }
-    }
     
 
+
+    for(auto &it: st){
+
+        int x1=inf,x2=0,y1=inf,y2=0;
+
+        for(auto &it2: st){
+            if(it==it2)continue;
+            x1=min(x1,it2.F);
+            y1=min(y1,it2.S);
+            x2=max(x2,it2.F);
+            y2=max(y2,it2.S);
+           
+
+           
+        }
+        
+        int w = x2 - x1 + 1;
+        int h = y2 - y1 + 1;
+        int area = w * h;
+
+        if(w*h>n-1){
+            ans=min(ans,area);       }
+
+        else{
+            ans = min(ans, (w+1) * h);
+            ans = min(ans, w * (h+1));
+        }
+    }
+
     cout<<ans<<ln;
+
+    
 
 
 }

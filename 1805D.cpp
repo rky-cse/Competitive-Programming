@@ -63,6 +63,52 @@ bool isTc=false;int ctc=1;int ntc=1;void rky_cse();void _tc();
 void run(){_tc();if(isTc)cin>>ntc;for(ctc=1;ctc<=ntc;ctc++)rky_cse();}
 
 //MARK:- Supplimentary Functions===============================================
+vector<int> adj[200001];
+vector<int> firstMax(N);   // to store first-max length.
+vector<int> secondMax(N);  // to store second-max length.
+int c[200001];          // to store child for path of max length.
+
+// calculate for every node x the maximum
+// length of a path that goes through a child of x
+void dfs(int v, int p) {
+	firstMax[v] = 0;
+	secondMax[v] = 0;
+	for (auto x : adj[v]) {
+		if (x == p) continue;
+		dfs(x, v);
+		if (firstMax[x] + 1 > firstMax[v]) {
+			secondMax[v] = firstMax[v];
+			firstMax[v] = firstMax[x] + 1;
+			c[v] = x;
+		} else if (firstMax[x] + 1 > secondMax[v]) {
+			secondMax[v] = firstMax[x] + 1;
+		}
+	}
+}
+
+// calculate for every node x the
+// maximum length of a path through its parent p
+void dfs2(int v, int p) {
+	for (auto x : adj[v]) {
+		if (x == p) continue;
+		if (c[v] == x) {
+			if (firstMax[x] < secondMax[v] + 1) {
+				secondMax[x] = firstMax[x];
+				firstMax[x] = secondMax[v] + 1;
+				c[x] = v;
+			} else {
+				secondMax[x] = max(secondMax[x], secondMax[v] + 1);
+			}
+		} else {
+			secondMax[x] = firstMax[x];
+			firstMax[x] = firstMax[v] + 1;
+			c[x] = v;
+		}
+		dfs2(x, v);
+	}
+}
+
+int n;
 
 
 
@@ -71,54 +117,34 @@ void prec(){          }
 
 int32_t main(){ ios::sync_with_stdio(0);cin.tie(0);prec();run();}
 
-void _tc(){                         isTc=true;
+void _tc(){                         //isTc=true;
 }
 void rky_cse(){
-    int n,m;cin>>n>>m;
 
-    map<int,int>mp;
-    vll a(n);
-    for(int i=0;i<n;i++){
-        cin>>a[i];
-        mp[a[i]]++;
+    cin>>n;
+   
+    for(int i=1;i<n;i++){
+        int u,v;cin>>u>>v;
+        adj[u].pb(v);
+        adj[v].pb(u);
     }
 
-  
-    int ct=m;
-    int ans=0;
-    int cur=1;
-    
+    dfs(1,0); // calculate firstMax and secondMax for every node
+    dfs2(1,0); // calculate firstMax and secondMax for every node
 
-    
+    //firstMax=secondMax;
 
-    if(mp.size()<m){
-        cout<<0<<ln;
-        return;
+    vector<ll> ecc(n);
+    for(int i=1;i<=n;i++) ecc[i-1]=firstMax[i];
+    sort(ecc.begin(), ecc.end());
+    for(int i=1;i<=n;i++){
+        ll cnt = (lower_bound(ecc.begin(), ecc.end(), i) - ecc.begin()) + 1;
+        if(cnt > n) cnt = n;
+        cout<<cnt<<' ';
     }
+    cout<<ln;
 
-    auto f=mp.begin();
+ 
 
-    for(auto it:mp){
-       
-        cur*=it.S;
-        cur%=mod;
-        ct--;
-        if(ct==0){
-            if(it.F-(f->F)<=m)ans=(ans+cur)%mod;
-            
-        }
-        else if(ct<0){
-            cur=cur*modInverse(f->S,mod)%mod;
-            f++;
-            if(it.F-(f->F)<=m-1)ans=(ans+cur)%mod;
-            
-
-
-        }
-    }
-    
-
-    cout<<ans<<ln;
-
-
+    cout<<ln;
 }

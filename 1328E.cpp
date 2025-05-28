@@ -65,60 +65,122 @@ void run(){_tc();if(isTc)cin>>ntc;for(ctc=1;ctc<=ntc;ctc++)rky_cse();}
 //MARK:- Supplimentary Functions===============================================
 
 
+vvll adj;
+vll tin,tout;
+
+int timer=0;
+
+vector<vector<int>>dp;
+
+vector<int>par;
+vector<int>lvl;
+
+void dfs(int node,int p){
+    tin[node]=timer++;
+
+    if(p == 0)
+        dp[node][0] = node;
+    else
+        dp[node][0] = p;
+
+    for(int i=1;i<20;i++){
+        dp[node][i]=dp[dp[node][i-1]][i-1];
+    }
+    for(auto child:adj[node]){
+        if(child==p)continue;
+        par[child]=node;
+        lvl[child]=lvl[node]+1;
+        dfs(child,node);
+    }
+    tout[node]=timer++;
+}
+
+bool isAncestor(int u,int v){
+    if(tin[u]<=tin[v] && tout[u]>=tout[v])return true;
+    return false;
+}
+int lca(int u,int v){
+    if(isAncestor(u,v))return u;
+    if(isAncestor(v,u))return v;
+
+    for(int i=19;i>=0;i--){
+        if(!isAncestor(dp[u][i],v)){
+            u=dp[u][i];
+        }
+    }
+    return dp[u][0];
+}
+
+
 
 
 void prec(){          }
 
 int32_t main(){ ios::sync_with_stdio(0);cin.tie(0);prec();run();}
 
-void _tc(){                         isTc=true;
+void _tc(){                         //isTc=true;
 }
 void rky_cse(){
     int n,m;cin>>n>>m;
 
-    map<int,int>mp;
-    vll a(n);
-    for(int i=0;i<n;i++){
-        cin>>a[i];
-        mp[a[i]]++;
-    }
+    adj.assign(n+1, {});
+    tin.resize(n+1);
+    tout.resize(n+1);
+    par.resize(n+1);
+    lvl.resize(n+1);
+    dp.assign(n+1,vector<int>(20,0));
+    
 
-  
-    int ct=m;
-    int ans=0;
-    int cur=1;
+    for(int i=0;i<n-1;i++){
+        int u,v;cin>>u>>v;
+        adj[u].pb(v);
+        adj[v].pb(u);
+    }
     
 
     
-
-    if(mp.size()<m){
-        cout<<0<<ln;
-        return;
+    for(int i=0;i<=n;i++){
+        par[i]=i;
+        lvl[i]=0;
     }
+    par[1]=1;
+    dfs(1,0);
 
-    auto f=mp.begin();
+    dbg(tin,tout,par,lvl)
 
-    for(auto it:mp){
-       
-        cur*=it.S;
-        cur%=mod;
-        ct--;
-        if(ct==0){
-            if(it.F-(f->F)<=m)ans=(ans+cur)%mod;
-            
+    dbg(lca(8,10))
+
+    while(m--){
+        int k;cin>>k;
+        vector<int>v(k);
+        for(int i=0;i<k;i++){
+            cin>>v[i];
         }
-        else if(ct<0){
-            cur=cur*modInverse(f->S,mod)%mod;
-            f++;
-            if(it.F-(f->F)<=m-1)ans=(ans+cur)%mod;
-            
+        int u=0;int l=0;
 
 
+        for(int i=0;i<k;i++){
+            if(lvl[v[i]]>l){
+                l=lvl[v[i]];
+                u=v[i];
+            }
         }
-    }
-    
+        dbg(u)
 
-    cout<<ans<<ln;
+        int f=0;
+
+        for(int i=0;i<k;i++){
+            int lc=lca(u,v[i]);
+            if(lc!=v[i] and abs(lvl[lc]-lvl[v[i]])>1){
+                dbg(lc,v[i])
+                f=1;
+                break;
+            }
+        }
+        if(f)cout<<"NO"<<ln;
+        else cout<<"YES"<<ln;
+
+    }
 
 
 }

@@ -74,51 +74,39 @@ int32_t main(){ ios::sync_with_stdio(0);cin.tie(0);prec();run();}
 void _tc(){                         isTc=true;
 }
 void rky_cse(){
-    int n,m;cin>>n>>m;
+    int n,x;cin>>n>>x;
+    vector<pair<int,int>>vp;
 
-    map<int,int>mp;
-    vll a(n);
+    int sum=0;
+
     for(int i=0;i<n;i++){
-        cin>>a[i];
-        mp[a[i]]++;
+        int a,b;cin>>a>>b;
+        sum+=b;
+        vp.push_back({a,b});
     }
 
-  
-    int ct=m;
+    vector<int>dp(sum+1,inf);
+
+    dp[0]=0;
+    
+    for(int j=0;j<n;j++){
+        for(int i=sum;i>=0;i--){
+            if(i-vp[j].S>=0  and j*x>=dp[i-vp[j].S]+vp[j].F){
+                dp[i]=min(dp[i],dp[i-vp[j].S]+vp[j].F);
+            }
+
+        }
+        
+    }
+    
+    dbg(dp);
+
     int ans=0;
-    int cur=1;
-    
 
-    
-
-    if(mp.size()<m){
-        cout<<0<<ln;
-        return;
-    }
-
-    auto f=mp.begin();
-
-    for(auto it:mp){
-       
-        cur*=it.S;
-        cur%=mod;
-        ct--;
-        if(ct==0){
-            if(it.F-(f->F)<=m)ans=(ans+cur)%mod;
-            
-        }
-        else if(ct<0){
-            cur=cur*modInverse(f->S,mod)%mod;
-            f++;
-            if(it.F-(f->F)<=m-1)ans=(ans+cur)%mod;
-            
-
-
+    for(int i=0;i<=sum;i++){
+        if(dp[i]<inf){
+            ans=max(ans,i);
         }
     }
-    
-
     cout<<ans<<ln;
-
-
 }

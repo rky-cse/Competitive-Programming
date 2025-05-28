@@ -63,7 +63,32 @@ bool isTc=false;int ctc=1;int ntc=1;void rky_cse();void _tc();
 void run(){_tc();if(isTc)cin>>ntc;for(ctc=1;ctc<=ntc;ctc++)rky_cse();}
 
 //MARK:- Supplimentary Functions===============================================
+int n,l,h,r;
 
+int dp[2001][2001];
+
+vector<int>a;
+
+int fun(int i,int ct){
+    if(i==n){
+        return 0;
+    }
+
+    if(dp[i][ct]!=-1) return dp[i][ct];
+    int ans=0;
+
+    int ct1=(ct+a[i]-1)%h;
+    int ct2=(ct+a[i])%h;
+
+    if(ct1>=l and ct1<=r) ans=max(ans,1+fun(i+1,ct1));
+    if(ct2>=l and ct2<=r) ans=max(ans,1+fun(i+1,ct2));
+    ans=max(ans,fun(i+1,ct1));
+    ans=max(ans,fun(i+1,ct2));
+
+    return dp[i][ct]=ans;
+
+
+}
 
 
 
@@ -71,54 +96,20 @@ void prec(){          }
 
 int32_t main(){ ios::sync_with_stdio(0);cin.tie(0);prec();run();}
 
-void _tc(){                         isTc=true;
+void _tc(){                        // isTc=true;
 }
 void rky_cse(){
-    int n,m;cin>>n>>m;
 
-    map<int,int>mp;
-    vll a(n);
+    cin>>n>>h>>l>>r;
+    a.resize(n+1);
     for(int i=0;i<n;i++){
         cin>>a[i];
-        mp[a[i]]++;
     }
+    memset(dp,-1,sizeof(dp));
 
-  
-    int ct=m;
-    int ans=0;
-    int cur=1;
-    
+    cout<<fun(0,0)<<ln;
+
+
 
     
-
-    if(mp.size()<m){
-        cout<<0<<ln;
-        return;
-    }
-
-    auto f=mp.begin();
-
-    for(auto it:mp){
-       
-        cur*=it.S;
-        cur%=mod;
-        ct--;
-        if(ct==0){
-            if(it.F-(f->F)<=m)ans=(ans+cur)%mod;
-            
-        }
-        else if(ct<0){
-            cur=cur*modInverse(f->S,mod)%mod;
-            f++;
-            if(it.F-(f->F)<=m-1)ans=(ans+cur)%mod;
-            
-
-
-        }
-    }
-    
-
-    cout<<ans<<ln;
-
-
 }

@@ -51,74 +51,98 @@ ll rng(ll mn, ll mx){uniform_int_distribution<ll> dis(mn, mx);return dis(gen);}
 //oms ordered_multiset || blf binary lifting || dsu unionbysize|| lsv linear seive
 //lsv linear seive O(n) + pf in O(logn)
 /*------------------------------------------------------------------------------------*/
-
 #include <bits/stdc++.h>
 using namespace std;
 
-//MARK:- CONSTANTS=============================================================
-const long long  N = 2e5+7;
-const long long  mod=1e9+7;
-const long long  inf = (ll)(1e18)+7;
-bool isTc=false;int ctc=1;int ntc=1;void rky_cse();void _tc();
-void run(){_tc();if(isTc)cin>>ntc;for(ctc=1;ctc<=ntc;ctc++)rky_cse();}
+int32_t main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
 
-//MARK:- Supplimentary Functions===============================================
-
-
-
-
-void prec(){          }
-
-int32_t main(){ ios::sync_with_stdio(0);cin.tie(0);prec();run();}
-
-void _tc(){                         isTc=true;
-}
-void rky_cse(){
-    int n,m;cin>>n>>m;
-
-    map<int,int>mp;
-    vll a(n);
-    for(int i=0;i<n;i++){
-        cin>>a[i];
-        mp[a[i]]++;
+    int n;
+    cin >> n;
+    vector<int> a(n);
+    for (int i = 0; i < n; i++) cin >> a[i];
+    int s, t;
+    cin >> s >> t;
+    s--; t--;
+    if (s == t) {
+        cout << 1 << '\n' << s + 1 << '\n';
+        return 0;
     }
-
-  
-    int ct=m;
-    int ans=0;
-    int cur=1;
-    
-
-    
-
-    if(mp.size()<m){
-        cout<<0<<ln;
-        return;
+   
+    if (a[s] == 1 || a[t] == 1) {
+        cout << -1 << '\n';
+        return 0;
     }
-
-    auto f=mp.begin();
-
-    for(auto it:mp){
-       
-        cur*=it.S;
-        cur%=mod;
-        ct--;
-        if(ct==0){
-            if(it.F-(f->F)<=m)ans=(ans+cur)%mod;
-            
-        }
-        else if(ct<0){
-            cur=cur*modInverse(f->S,mod)%mod;
-            f++;
-            if(it.F-(f->F)<=m-1)ans=(ans+cur)%mod;
-            
-
-
+    int maxA = *max_element(a.begin(), a.end());
+    vector<int> spf(maxA + 1);
+    for (int i = 2; i <= maxA; i++) {
+        if (spf[i] == 0) {
+            for (int j = i; j <= maxA; j += i) if (spf[j] == 0)
+                spf[j] = i;
         }
     }
     
-
-    cout<<ans<<ln;
-
-
+    vector<vector<int>> spiderPrimes(n);
+    vector<vector<int>> primeSpiders(maxA + 1);
+    for (int i = 0; i < n; i++) {
+        int x = a[i];
+        while (x > 1) {
+            int p = spf[x];
+            spiderPrimes[i].push_back(p);
+            x /= p;
+            while (x % p == 0) x /= p;
+        }
+        for (int p : spiderPrimes[i])
+            primeSpiders[p].push_back(i);
+    }
+    vector<char> visSpider(n), visPrime(maxA + 1);
+    vector<int> parSpider(n, -1), parPrime(maxA + 1, -1);
+    queue<pair<int,int>> q;
+    visSpider[s] = 1;
+    q.push({s, 0}); // type 0 = spider, 1 = prime
+    bool found = false;
+    while (!q.empty() && !visSpider[t]) {
+        auto [u, type] = q.front();
+        q.pop();
+        if (type == 0) {
+            // spider -> primes
+            for (int p : spiderPrimes[u]) {
+                if (!visPrime[p]) {
+                    visPrime[p] = 1;
+                    parPrime[p] = u;
+                    q.push({p, 1});
+                }
+            }
+        } else {
+            // prime -> spiders
+            for (int v : primeSpiders[u]) {
+                if (!visSpider[v]) {
+                    visSpider[v] = 1;
+                    parSpider[v] = u;
+                    q.push({v, 0});
+                    if (v == t) { found = true; break; }
+                }
+            }
+        }
+        if (found) break;
+    }
+    if (!visSpider[t]) {
+        cout << -1 << '\n';
+        return 0;
+    }
+ 
+    vector<int> path;
+    int cur = t;
+    while (cur != s) {
+        path.push_back(cur + 1);
+        int p = parSpider[cur];
+        cur = parPrime[p];
+    }
+    path.push_back(s + 1);
+    reverse(path.begin(), path.end());
+    cout << path.size() << '\n';
+    for (int x : path) cout << x << ' ';
+    cout << '\n';
+    return 0;
 }

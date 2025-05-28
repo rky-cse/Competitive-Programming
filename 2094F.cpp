@@ -64,7 +64,9 @@ void run(){_tc();if(isTc)cin>>ntc;for(ctc=1;ctc<=ntc;ctc++)rky_cse();}
 
 //MARK:- Supplimentary Functions===============================================
 
-
+void tle(){
+    while(true);
+}
 
 
 void prec(){          }
@@ -74,51 +76,97 @@ int32_t main(){ ios::sync_with_stdio(0);cin.tie(0);prec();run();}
 void _tc(){                         isTc=true;
 }
 void rky_cse(){
-    int n,m;cin>>n>>m;
+    int n,m,k;cin>>n>>m>>k;
 
-    map<int,int>mp;
-    vll a(n);
+    vector<vector<int>> a(n,vector<int>(m,0));
+    int ct=0;
+
     for(int i=0;i<n;i++){
-        cin>>a[i];
-        mp[a[i]]++;
+        for(int j=0;j<m;j++){
+            a[i][j]=ct%k;
+            ct++;
+        }
     }
+    dbg(a)
 
-  
-    int ct=m;
-    int ans=0;
-    int cur=1;
-    
+    int f=0;
 
-    
+    for(int i=0;i<n;i++){
+        for(int j=0;j<m;j++){
+            if(i+1<n){
+                if(a[i][j]==a[i+1][j]){
+                    f=1;
+                    break;
+                }
 
-    if(mp.size()<m){
-        cout<<0<<ln;
+            }
+            if(j+1<m){
+                if(a[i][j]==a[i][j+1]){
+                    f=1;
+                    break;
+                }
+            }
+        }
+    }
+    if(f==0){
+        for(int i=0;i<n;i++){
+            for(int j=0;j<m;j++){
+                cout<<a[i][j]+1<<" ";
+            }
+            cout<<ln;
+        }
         return;
+
     }
+    else{
+        int ad=1;
+        ct=0;
+        f=0;
 
-    auto f=mp.begin();
-
-    for(auto it:mp){
-       
-        cur*=it.S;
-        cur%=mod;
-        ct--;
-        if(ct==0){
-            if(it.F-(f->F)<=m)ans=(ans+cur)%mod;
-            
+        for(int i=0;i<n;i++){
+            for(int j=0;j<m;j++){
+                if(i%2){
+                    a[i][j]=(ct+ad)%k;
+                }
+                else
+                a[i][j]=ct%k;
+                ct++;
+            }
         }
-        else if(ct<0){
-            cur=cur*modInverse(f->S,mod)%mod;
-            f++;
-            if(it.F-(f->F)<=m-1)ans=(ans+cur)%mod;
-            
-
-
+        for(int i=0;i<n;i++){
+            for(int j=0;j<m;j++){
+                if(i+1<n){
+                    if(a[i][j]==a[i+1][j]){
+                        f=1;
+                        break;
+                    }
+    
+                }
+                if(j+1<m){
+                    if(a[i][j]==a[i][j+1]){
+                        f=1;
+                        break;
+                    }
+                }
+            }
         }
+        if(f==0){
+            for(int i=0;i<n;i++){
+                for(int j=0;j<m;j++){
+                    cout<<a[i][j]+1<<" ";
+                }
+                cout<<ln;
+            }
+            return;
+    
+        }
+        else{
+            tle();// just to know my sol is wrong or not
+            return;
+        }
+        
+            
+        
     }
     
-
-    cout<<ans<<ln;
-
-
 }

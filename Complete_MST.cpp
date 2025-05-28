@@ -74,51 +74,56 @@ int32_t main(){ ios::sync_with_stdio(0);cin.tie(0);prec();run();}
 void _tc(){                         isTc=true;
 }
 void rky_cse(){
-    int n,m;cin>>n>>m;
+    int n,m;
+    cin>>n>>m;
 
-    map<int,int>mp;
-    vll a(n);
-    for(int i=0;i<n;i++){
-        cin>>a[i];
-        mp[a[i]]++;
-    }
-
-  
-    int ct=m;
-    int ans=0;
-    int cur=1;
-    
+    int mx=0;;
 
     
 
-    if(mp.size()<m){
-        cout<<0<<ln;
-        return;
+    dbg(mx)
+
+    int zr=(n*(n-1))/2-m;
+
+    dbg(zr)
+    int mn=n;
+
+    if(zr<n-1){
+        mn=min(mn,n-zr);
+    }
+    else{
+        mn=min(mn,1LL);
     }
 
-    auto f=mp.begin();
 
-    for(auto it:mp){
-       
-        cur*=it.S;
-        cur%=mod;
-        ct--;
-        if(ct==0){
-            if(it.F-(f->F)<=m)ans=(ans+cur)%mod;
-            
+    
+
+    // int sq=sqrtl(zr);
+
+    // if(sq*(sq-1)/2>=zr){
+    //     mx=max(mx,n-sq+1);
+    // }
+
+    
+    int low=1,high=n;
+
+    while(low<=high){
+        int mid=(low+high)/2;
+        if(mid*(mid-1)/2>=zr){
+            high=mid-1;
         }
-        else if(ct<0){
-            cur=cur*modInverse(f->S,mod)%mod;
-            f++;
-            if(it.F-(f->F)<=m-1)ans=(ans+cur)%mod;
-            
-
-
+        else{
+            low=mid+1;
         }
     }
+
+    mx=max(mx,n-low+1);
+
+    dbg(mn,mx)
+    cout<<((mx*(mx-1))/2)-(((mn-1)*(mn-2))/2)<<ln;
+
+
+
+
     
-
-    cout<<ans<<ln;
-
-
 }

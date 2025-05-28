@@ -63,7 +63,26 @@ bool isTc=false;int ctc=1;int ntc=1;void rky_cse();void _tc();
 void run(){_tc();if(isTc)cin>>ntc;for(ctc=1;ctc<=ntc;ctc++)rky_cse();}
 
 //MARK:- Supplimentary Functions===============================================
+int n;
+vll a;
+vvll adj;
 
+vvll dp;
+
+void dfs(int node,int p){
+
+
+    for(auto &ch: adj[node]){
+        if(ch==p)continue;
+        dp[ch][0]+=(dp[node][1]+a[ch]);
+        dp[ch][1]+=(dp[node][0]-a[ch]);
+        dp[ch][1]=max(0LL,dp[ch][1]);
+        dp[ch][0]=max(0LL,dp[ch][0]);
+        dfs(ch,node);
+
+    }
+
+}
 
 
 
@@ -71,54 +90,38 @@ void prec(){          }
 
 int32_t main(){ ios::sync_with_stdio(0);cin.tie(0);prec();run();}
 
-void _tc(){                         isTc=true;
+void _tc(){                         
+    isTc=true;
 }
 void rky_cse(){
-    int n,m;cin>>n>>m;
 
-    map<int,int>mp;
-    vll a(n);
+    cin>>n;
+    a.assign(n,0);
+
     for(int i=0;i<n;i++){
         cin>>a[i];
-        mp[a[i]]++;
     }
 
-  
-    int ct=m;
-    int ans=0;
-    int cur=1;
+    adj.assign(n, vll());
+    for(int i=0;i<n-1;i++){
+        int u,v;cin>>u>>v;
+        u--;v--;
+        adj[u].pb(v);
+        adj[v].pb(u);
+    }
+
+    dp.assign(n, vll(2, 0));
+
+    dp[0][0]=a[0];
+
+    dfs(0,-1);
+
+    for(int i=0;i<n;i++){
+        cout<<dp[i][0]<<" ";
+    }
+    cout<<ln;
     
 
     
-
-    if(mp.size()<m){
-        cout<<0<<ln;
-        return;
-    }
-
-    auto f=mp.begin();
-
-    for(auto it:mp){
-       
-        cur*=it.S;
-        cur%=mod;
-        ct--;
-        if(ct==0){
-            if(it.F-(f->F)<=m)ans=(ans+cur)%mod;
-            
-        }
-        else if(ct<0){
-            cur=cur*modInverse(f->S,mod)%mod;
-            f++;
-            if(it.F-(f->F)<=m-1)ans=(ans+cur)%mod;
-            
-
-
-        }
-    }
     
-
-    cout<<ans<<ln;
-
-
 }

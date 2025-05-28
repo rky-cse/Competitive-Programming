@@ -1,9 +1,9 @@
 #include <bits/stdc++.h>
 using namespace std;
-//#include<ext/pb_ds/assoc_container.hpp>
-//#include<ext/pb_ds/tree_policy.hpp>
-//using namespace __gnu_pbds;
-//typedef tree<long long, null_type, less<long long>, rb_tree_tag, tree_order_statistics_node_update> pbds; // find_by_order, order_of_key
+#include<ext/pb_ds/assoc_container.hpp>
+#include<ext/pb_ds/tree_policy.hpp>
+using namespace __gnu_pbds;
+typedef tree<long long, null_type, less<long long>, rb_tree_tag, tree_order_statistics_node_update> pbds; // find_by_order, order_of_key
 
 //MARK:- MACROS================================================================
 #define ln                      '\n'
@@ -67,6 +67,7 @@ void run(){_tc();if(isTc)cin>>ntc;for(ctc=1;ctc<=ntc;ctc++)rky_cse();}
 
 
 
+
 void prec(){          }
 
 int32_t main(){ ios::sync_with_stdio(0);cin.tie(0);prec();run();}
@@ -74,51 +75,88 @@ int32_t main(){ ios::sync_with_stdio(0);cin.tie(0);prec();run();}
 void _tc(){                         isTc=true;
 }
 void rky_cse(){
-    int n,m;cin>>n>>m;
+
+    int n,q;cin>>n>>q;
+
+    vll a(n+1);
+    for(int i=1;i<=n;i++){
+        cin>>a[i];
+    }
 
     map<int,int>mp;
-    vll a(n);
-    for(int i=0;i<n;i++){
-        cin>>a[i];
-        mp[a[i]]++;
-    }
 
-  
-    int ct=m;
-    int ans=0;
-    int cur=1;
-    
+    for(int i=1;i<=n;i++){
+        mp[a[i]]=i;
+    }
 
     
 
-    if(mp.size()<m){
-        cout<<0<<ln;
-        return;
-    }
+    while(q--){
+        // return mat karna
 
-    auto f=mp.begin();
+        int l,r,k;cin>>l>>r>>k;
 
-    for(auto it:mp){
-       
-        cur*=it.S;
-        cur%=mod;
-        ct--;
-        if(ct==0){
-            if(it.F-(f->F)<=m)ans=(ans+cur)%mod;
-            
+        int ans=0;
+
+        if(mp[k]>r or mp[k]<l){
+            cout<<-1<<' ';
+            continue;
         }
-        else if(ct<0){
-            cur=cur*modInverse(f->S,mod)%mod;
-            f++;
-            if(it.F-(f->F)<=m-1)ans=(ans+cur)%mod;
-            
+
+        if(l>r){
+            cout<<-1<<' ';
+            continue;
+        }
+
+        
+
+
+    
+
+    
+
+        int pk=mp[k];
+
+
+        while(l<=r){
+            int mid=(l+r)/2;
+
+            if(a[mid]==k){
+                break;
+            }
+
+            if(a[mid]<k){
+
+                if(pk<mid){
+
+                    ans++;
+                }
+                r=mid-1;
+
+            }
+            else {
+                    
+                if(pk>mid){
+                    ans++;
+                }
+                l=mid+1;
+            }
 
 
         }
+
+        dbg(ans)
+
+        cout<<2LL*ans<<' ';
+
+        
+
+
+
     }
+    cout<<ln;
+
+
+
     
-
-    cout<<ans<<ln;
-
-
 }

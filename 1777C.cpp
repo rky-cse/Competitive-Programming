@@ -67,7 +67,23 @@ void run(){_tc();if(isTc)cin>>ntc;for(ctc=1;ctc<=ntc;ctc++)rky_cse();}
 
 
 
-void prec(){          }
+map<int,set<int>>mp;
+
+void prec(){
+
+    for(int i=1;i<=100000;i++){
+        for(int j=1;j*j<=i;j++){
+            if(i%j==0){
+                mp[i].insert(j);
+                mp[i].insert(i/j);
+            }
+
+        }
+    }
+
+
+
+}
 
 int32_t main(){ ios::sync_with_stdio(0);cin.tie(0);prec();run();}
 
@@ -75,50 +91,38 @@ void _tc(){                         isTc=true;
 }
 void rky_cse(){
     int n,m;cin>>n>>m;
-
-    map<int,int>mp;
     vll a(n);
+
     for(int i=0;i<n;i++){
         cin>>a[i];
-        mp[a[i]]++;
     }
 
-  
-    int ct=m;
-    int ans=0;
-    int cur=1;
-    
+    sort(all(a));
 
-    
+   
 
-    if(mp.size()<m){
-        cout<<0<<ln;
-        return;
+    dbg(a);
+
+    for(int i=0;i<n;i++){
+        dbg(mp[a[i]]);
     }
-
-    auto f=mp.begin();
-
-    for(auto it:mp){
-       
-        cur*=it.S;
-        cur%=mod;
-        ct--;
-        if(ct==0){
-            if(it.F-(f->F)<=m)ans=(ans+cur)%mod;
-            
+    map<int,int> cnt;
+    int ans = inf;
+    int l = 0;
+    for(int r = 0; r < n; r++){
+        for(auto d : mp[a[r]]){
+            if(d <= m) cnt[d]++;
         }
-        else if(ct<0){
-            cur=cur*modInverse(f->S,mod)%mod;
-            f++;
-            if(it.F-(f->F)<=m-1)ans=(ans+cur)%mod;
-            
-
-
+        while(l <= r && (int)cnt.size() == m){
+            ans = min(ans, a[r] - a[l]);
+            for(auto d : mp[a[l]]){
+                if(d <= m){
+                    cnt[d]--;
+                    if(cnt[d] == 0) cnt.erase(d);
+                }
+            }
+            l++;
         }
     }
-    
-
-    cout<<ans<<ln;
-
-
+    cout << (ans==inf ? -1 : ans) << ln;
 }

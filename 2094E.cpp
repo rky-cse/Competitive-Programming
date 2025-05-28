@@ -74,51 +74,43 @@ int32_t main(){ ios::sync_with_stdio(0);cin.tie(0);prec();run();}
 void _tc(){                         isTc=true;
 }
 void rky_cse(){
-    int n,m;cin>>n>>m;
-
-    map<int,int>mp;
+    int n;cin>>n;
     vll a(n);
+    for(int i=0;i<n;i++)cin>>a[i];
+    int sum=0;
     for(int i=0;i<n;i++){
-        cin>>a[i];
-        mp[a[i]]++;
+        sum+=a[i];
     }
 
-  
-    int ct=m;
+    vector<int>cnt(31,0);
+    for(int i=0;i<n;i++){
+        for(int j=0;j<31;j++){
+            if(a[i]&(1LL<<j)){
+                cnt[j]++;
+            }
+        }
+    }
+
     int ans=0;
-    int cur=1;
-    
 
-    
+    dbg(cnt)
 
-    if(mp.size()<m){
-        cout<<0<<ln;
-        return;
-    }
+    for(int i=0;i<n;i++){
+        int ns=sum;
+        for(int j=0;j<31;j++){
+            if(a[i]&(1LL<<j)){
+                dbg(i,j,cnt[j])
 
-    auto f=mp.begin();
+                ns-=(1LL<<j)*cnt[j];
+                ns+=(1LL<<j)*(n-cnt[j]);
 
-    for(auto it:mp){
-       
-        cur*=it.S;
-        cur%=mod;
-        ct--;
-        if(ct==0){
-            if(it.F-(f->F)<=m)ans=(ans+cur)%mod;
+                dbg(ns)
+            }
             
         }
-        else if(ct<0){
-            cur=cur*modInverse(f->S,mod)%mod;
-            f++;
-            if(it.F-(f->F)<=m-1)ans=(ans+cur)%mod;
-            
-
-
-        }
+        ans=max(ans,ns);
     }
-    
 
     cout<<ans<<ln;
-
 
 }

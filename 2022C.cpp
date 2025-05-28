@@ -64,6 +64,112 @@ void run(){_tc();if(isTc)cin>>ntc;for(ctc=1;ctc<=ntc;ctc++)rky_cse();}
 
 //MARK:- Supplimentary Functions===============================================
 
+int n;
+string s,t;
+
+vector<vector<vector<int>>>dp;
+int fun(int i, int d, int f) {
+    if (i == n and d==0) return 0;
+    if(i>=n) return -inf;
+    if (dp[i][d][f] != -1) return dp[i][d][f];
+
+    int ans = 0;
+    int j = f ? i - d : i + d;
+
+    if (i < j) {
+        int ct, ad;
+        // take 2 from s and 1 from t
+        ct = ad = 0;
+        for (int k = i; k < i + 2; k++) {
+            if (k >= n) break;
+            if (s[k] == 'A') ct++;
+        }
+        if (j < n && t[j] == 'A') ct++;
+        if (ct >= 2) ad = 1;
+        ans = max(ans, ad + fun(i + 2, 0, 0));
+
+        // take 3 from s and 3 from t
+        ct = ad = 0;
+        int ct2 = 0;
+        for (int k = i; k < i + 3; k++) {
+            if (k >= n) break;
+            if (s[k] == 'A') ct++;
+        }
+        for (int k = j; k < j + 3; k++) {
+            if (k >= n) break;
+            if (t[k] == 'A') ct2++;
+        }
+        if (ct >= 2) ad++;
+        if (ct2 >= 2) ad++;
+        ans = max(ans, ad + fun(i + 3, d, f));
+    }
+    else if (i > j) {
+        int ct, ad;
+        // take 1 from s and 2 from t
+        ct = ad = 0;
+        if (i < n && s[i] == 'A') ct++;
+        for (int k = j; k < j + 2; k++) {
+            if (k >= n) break;
+            if (t[k] == 'A') ct++;
+        }
+        if (ct >= 2) ad = 1;
+        ans = max(ans, ad + fun(i + 1, 0, 0));
+
+        // take 3 from s and 3 from t
+        ct = ad = 0;
+        int ct2 = 0;
+        for (int k = i; k < i + 3; k++) {
+            if (k >= n) break;
+            if (s[k] == 'A') ct2++;
+        }
+        for (int k = j; k < j + 3; k++) {
+            if (k >= n) break;
+            if (t[k] == 'A') ct++;
+        }
+        if (ct2 >= 2) ad++;
+        if (ct >= 2) ad++;
+        ans = max(ans, ad + fun(i + 3, d, f));
+    }
+    else {
+        int ct, ad;
+        // take 1 from s and 2 from t
+        ct = ad = 0;
+        if (i < n && s[i] == 'A') ct++;
+        for (int k = i; k < i + 2; k++) {
+            if (k >= n) break;
+            if (t[k] == 'A') ct++;
+        }
+        if (ct >= 2) ad = 1;
+        ans = max(ans, ad + fun(i + 1, 1, 0));
+
+        // take 2 from s and 1 from t
+        ct = ad = 0;
+        for (int k = i; k < i + 2; k++) {
+            if (k >= n) break;
+            if (s[k] == 'A') ct++;
+        }
+        if (j < n && t[j] == 'A') ct++;
+        if (ct >= 2) ad = 1;
+        ans = max(ans, ad + fun(i + 2, 1, 1));
+
+        // take 3 from s and 3 from t
+        ct = ad = 0;
+        int ct2 = 0;
+        for (int k = i; k < i + 3; k++) {
+            if (k >= n) break;
+            if (s[k] == 'A') ct++;
+        }
+        for (int k = j; k < j + 3; k++) {
+            if (k >= n) break;
+            if (t[k] == 'A') ct2++;
+        }
+        if (ct >= 2) ad++;
+        if (ct2 >= 2) ad++;
+        ans = max(ans, ad + fun(i + 3, 0, 0));
+    }
+
+    return dp[i][d][f] = ans;
+}
 
 
 
@@ -74,51 +180,14 @@ int32_t main(){ ios::sync_with_stdio(0);cin.tie(0);prec();run();}
 void _tc(){                         isTc=true;
 }
 void rky_cse(){
-    int n,m;cin>>n>>m;
 
-    map<int,int>mp;
-    vll a(n);
-    for(int i=0;i<n;i++){
-        cin>>a[i];
-        mp[a[i]]++;
-    }
+    cin>>n>>s>>t;
 
-  
-    int ct=m;
-    int ans=0;
-    int cur=1;
-    
+    dp.assign(n+1,vector<vector<int>>(4,vector<int>(2,-1)));
 
-    
-
-    if(mp.size()<m){
-        cout<<0<<ln;
-        return;
-    }
-
-    auto f=mp.begin();
-
-    for(auto it:mp){
-       
-        cur*=it.S;
-        cur%=mod;
-        ct--;
-        if(ct==0){
-            if(it.F-(f->F)<=m)ans=(ans+cur)%mod;
-            
-        }
-        else if(ct<0){
-            cur=cur*modInverse(f->S,mod)%mod;
-            f++;
-            if(it.F-(f->F)<=m-1)ans=(ans+cur)%mod;
-            
-
-
-        }
-    }
-    
-
+    int ans=fun(0,0,0);
     cout<<ans<<ln;
 
 
+    
 }

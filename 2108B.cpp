@@ -63,7 +63,46 @@ bool isTc=false;int ctc=1;int ntc=1;void rky_cse();void _tc();
 void run(){_tc();if(isTc)cin>>ntc;for(ctc=1;ctc<=ntc;ctc++)rky_cse();}
 
 //MARK:- Supplimentary Functions===============================================
+bool ck(string &a,string &b,string &c,map<char,int>&mp){
 
+    int n=c.size();
+
+    int sa=a.size();
+    int sb=b.size();
+
+    int carry=0;
+    int j=0;
+
+    for(int i=0;i<n;i++){
+
+        int sum=mp[c[i]];
+
+        int x=0, y=0;
+
+        if(i<a.size()){
+            x=mp[a[i]];
+
+        }
+        if(i<b.size()){
+            y=mp[b[i]];
+        }
+    
+
+        int d=(x+y+carry)%10;   
+        carry=(x+y+carry)/10;
+        if(d!=sum){
+            return false;
+        }
+
+    }
+
+    if(carry!=0){
+        return false;
+    }  
+
+    return true;
+
+}
 
 
 
@@ -71,54 +110,75 @@ void prec(){          }
 
 int32_t main(){ ios::sync_with_stdio(0);cin.tie(0);prec();run();}
 
-void _tc(){                         isTc=true;
+void _tc(){                         //isTc=true;
 }
 void rky_cse(){
-    int n,m;cin>>n>>m;
+    string a,b,c;
+    cin>>a>>b>>c;
 
-    map<int,int>mp;
-    vll a(n);
-    for(int i=0;i<n;i++){
-        cin>>a[i];
-        mp[a[i]]++;
-    }
+    reverse(all(a));
+    reverse(all(b));
+    reverse(all(c));
 
-  
-    int ct=m;
-    int ans=0;
-    int cur=1;
-    
+    set<char>st;
 
-    
+    for(auto i:a)st.insert(i);
+    for(auto i:b)st.insert(i);
+    for(auto i:c)st.insert(i);
 
-    if(mp.size()<m){
-        cout<<0<<ln;
+    if(st.size() > 10){
+        no
         return;
     }
 
-    auto f=mp.begin();
+    vector<int>v(10,0);
 
-    for(auto it:mp){
-       
-        cur*=it.S;
-        cur%=mod;
-        ct--;
-        if(ct==0){
-            if(it.F-(f->F)<=m)ans=(ans+cur)%mod;
-            
-        }
-        else if(ct<0){
-            cur=cur*modInverse(f->S,mod)%mod;
-            f++;
-            if(it.F-(f->F)<=m-1)ans=(ans+cur)%mod;
-            
+    int k=st.size();
 
-
-        }
-    }
+    for(int i=0;i<k;i++){
+        v[i]=1;
+    }  
     
+    sort(all(v));
 
-    cout<<ans<<ln;
+    //dbg("here")
 
+    do{
+        vector<int>sl;
 
+        for(int i=0;i<10;i++){
+            if(v[i]){
+                sl.pb(i);
+            }
+        }
+        
+        vector<int>p(k);
+        for(int i=0;i<k;i++){
+            p[i]=i;
+        }
+
+        do{
+
+            //dbg("here",sl,p)
+            map<char,int>mp;
+            int j=0;
+            for(auto &it:st){
+                mp[it]=sl[p[j++]];
+            }
+
+            if(ck(a,b,c,mp)){
+
+                yes;
+
+                
+                return;
+            }
+
+            
+
+        }while(next_permutation(all(p)));
+
+    }while(next_permutation(all(v)));
+
+    no;
 }

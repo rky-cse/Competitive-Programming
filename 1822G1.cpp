@@ -74,47 +74,30 @@ int32_t main(){ ios::sync_with_stdio(0);cin.tie(0);prec();run();}
 void _tc(){                         isTc=true;
 }
 void rky_cse(){
-
-    // ai * b=aj
-    // b=aj/ai
-    // aj*b=ak
-    // aj*aj=ak*ai
-    
-    int n;cin>>n;
+    int n; cin >> n;
     vll a(n);
-
-    for(int i=0;i<n;i++){
-        cin>>a[i];
-    }
-
+    for (int i=0; i<n; i++) cin >> a[i];
     sort(all(a));
-
-    map<int,int>mp;
-
-
-    for(int i=0;i<n;i++){
-        mp[a[i]]++;
-    }
-
-    int ans=0;
-
-    for(auto &it:mp){
-
-        int x=it.F;
-        int xx=x*x;        
-        if(true){
-            for(auto &itt:mp){
-                if(itt.F>it.F){
-                    break;
-                }
-                int y=xx/itt.F;
-                if(y*itt.F==x and mp.find(y)!=mp.end()){
-                    ans=itt.S*mp[y];
+    map<int,int> mp;
+    int ans = 0;
+    mp[a[0]]++;
+    mp[a[1]]++;
+    for (int k = 2; k < n; k++){
+        for (int b = 1; b <= 1000; b++){
+            if(a[k] % (b*b) == 0){
+                int x = a[k] / (b*b);
+                int y = a[k] / b;
+                if(x == y){
+                    if(b == 1) 
+                        ans += 6LL * ( mp[x] * (mp[x] - 1) / 2 );
+                    else 
+                        ans += mp[x] * (mp[x] - 1) / 2;
+                } else {
+                    ans += mp[x] * mp[y];
                 }
             }
         }
-        
+        mp[a[k]]++;
     }
-
-    cout<<ans<<ln;
+    cout << ans << ln;
 }

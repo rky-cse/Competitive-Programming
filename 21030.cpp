@@ -74,51 +74,34 @@ int32_t main(){ ios::sync_with_stdio(0);cin.tie(0);prec();run();}
 void _tc(){                         isTc=true;
 }
 void rky_cse(){
-    int n,m;cin>>n>>m;
-
-    map<int,int>mp;
+    int n;cin>>n;
     vll a(n);
+
     for(int i=0;i<n;i++){
-        cin>>a[i];
-        mp[a[i]]++;
+        cin>>a[i]; 
+        
     }
 
-  
-    int ct=m;
-    int ans=0;
-    int cur=1;
-    
+    int ans=1;
 
-    
+    // int g=a[0];
+    // int lcm=a[0];
+    // for(int i=1;i<n;i++){
+    //     g=__gcd(g,a[i]);
+    //     lcm=(lcm*a[i])/__gcd(lcm,a[i]);
+    // }
+    set<int>st;
+    for(int i=0;i<n;i++){
 
-    if(mp.size()<m){
-        cout<<0<<ln;
-        return;
-    }
-
-    auto f=mp.begin();
-
-    for(auto it:mp){
-       
-        cur*=it.S;
-        cur%=mod;
-        ct--;
-        if(ct==0){
-            if(it.F-(f->F)<=m)ans=(ans+cur)%mod;
+        
+        // if(lcm%a[i]==0){
+            st.insert(a[i]);
             
-        }
-        else if(ct<0){
-            cur=cur*modInverse(f->S,mod)%mod;
-            f++;
-            if(it.F-(f->F)<=m-1)ans=(ans+cur)%mod;
-            
-
-
-        }
+        // }
+        
+        
     }
-    
-
+    ans=st.size();
+      
     cout<<ans<<ln;
-
-
 }

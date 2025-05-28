@@ -74,51 +74,35 @@ int32_t main(){ ios::sync_with_stdio(0);cin.tie(0);prec();run();}
 void _tc(){                         isTc=true;
 }
 void rky_cse(){
-    int n,m;cin>>n>>m;
-
-    map<int,int>mp;
-    vll a(n);
-    for(int i=0;i<n;i++){
-        cin>>a[i];
-        mp[a[i]]++;
-    }
-
-  
-    int ct=m;
-    int ans=0;
-    int cur=1;
-    
-
-    
-
-    if(mp.size()<m){
-        cout<<0<<ln;
-        return;
-    }
-
-    auto f=mp.begin();
-
-    for(auto it:mp){
-       
-        cur*=it.S;
-        cur%=mod;
-        ct--;
-        if(ct==0){
-            if(it.F-(f->F)<=m)ans=(ans+cur)%mod;
-            
-        }
-        else if(ct<0){
-            cur=cur*modInverse(f->S,mod)%mod;
-            f++;
-            if(it.F-(f->F)<=m-1)ans=(ans+cur)%mod;
-            
-
-
-        }
-    }
-    
-
-    cout<<ans<<ln;
-
-
+    ll n,k;
+       cin>>n>>k;
+       ll wins=0;
+       ll draws=0;
+       if(k==0)
+       {
+           cout<<"1\n";//all element 0
+           return;
+       }
+       if(n%2==1)
+       {
+           wins=0;
+           draws=power(2ll,n-1,mod)+1ll;//number of ways of choosing even numbers in nCr chapter main proof ki tarah hai ki nC1+nC3+nC5==2^n-1
+           ll good=draws%mod;
+           ll result=power(good,k,mod);
+           cout<<result<<"\n";
+       }
+       else
+       {
+           ll ans=1;
+           ll wins=power(2ll,n,mod);
+           ll draws=power(2ll,n-1,mod);
+           for(int i=0;i<k;i++)
+           {
+               ll curr=(draws-1+mod)%mod;
+               curr=(curr*ans)%mod;
+               (curr+=power(wins,i,mod))%mod;
+               ans=(curr)%mod;
+           }
+           cout<<ans<<"\n";
+       }
 }

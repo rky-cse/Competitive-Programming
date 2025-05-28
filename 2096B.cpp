@@ -74,51 +74,33 @@ int32_t main(){ ios::sync_with_stdio(0);cin.tie(0);prec();run();}
 void _tc(){                         isTc=true;
 }
 void rky_cse(){
-    int n,m;cin>>n>>m;
-
-    map<int,int>mp;
+    int n,k;cin>>n>>k;
     vll a(n);
+
+    
+    for(int i=0;i<n;i++) cin>>a[i];
+    vll b(n);
+
+    for(int i=0;i<n;i++) cin>>b[i];
+    vector<pair<int,int>> va;
+    for(int i=0;i<n;i++) va.pb({a[i],b[i]});
+
+    int ans=1;
+
     for(int i=0;i<n;i++){
-        cin>>a[i];
-        mp[a[i]]++;
+        ans+=max(va[i].F,va[i].S);
     }
+    multiset<int> st;
 
-  
-    int ct=m;
-    int ans=0;
-    int cur=1;
-    
-
-    
-
-    if(mp.size()<m){
-        cout<<0<<ln;
-        return;
+    for(int i=0;i<n;i++){
+        st.insert(min(va[i].F,va[i].S));
     }
+    int ct=k-1;
 
-    auto f=mp.begin();
-
-    for(auto it:mp){
-       
-        cur*=it.S;
-        cur%=mod;
-        ct--;
-        if(ct==0){
-            if(it.F-(f->F)<=m)ans=(ans+cur)%mod;
-            
-        }
-        else if(ct<0){
-            cur=cur*modInverse(f->S,mod)%mod;
-            f++;
-            if(it.F-(f->F)<=m-1)ans=(ans+cur)%mod;
-            
-
-
-        }
+    while(ct-->0){
+        auto it=--st.end();
+        ans+=*it;
+        st.erase(it);
     }
-    
-
     cout<<ans<<ln;
-
-
 }

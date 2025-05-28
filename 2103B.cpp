@@ -74,51 +74,67 @@ int32_t main(){ ios::sync_with_stdio(0);cin.tie(0);prec();run();}
 void _tc(){                         isTc=true;
 }
 void rky_cse(){
-    int n,m;cin>>n>>m;
+    int n;cin>>n;
 
-    map<int,int>mp;
-    vll a(n);
-    for(int i=0;i<n;i++){
-        cin>>a[i];
-        mp[a[i]]++;
+    string s;cin>>s;
+
+    int ans=n;
+
+    int f=0;
+    if(s[0]=='1'){
+        ans++;
+        f=1;
+
     }
-
-  
-    int ct=m;
-    int ans=0;
-    int cur=1;
-    
-
-    
-
-    if(mp.size()<m){
-        cout<<0<<ln;
-        return;
-    }
-
-    auto f=mp.begin();
-
-    for(auto it:mp){
-       
-        cur*=it.S;
-        cur%=mod;
-        ct--;
-        if(ct==0){
-            if(it.F-(f->F)<=m)ans=(ans+cur)%mod;
-            
-        }
-        else if(ct<0){
-            cur=cur*modInverse(f->S,mod)%mod;
-            f++;
-            if(it.F-(f->F)<=m-1)ans=(ans+cur)%mod;
-            
-
+    for(int i=1;i<n;i++){
+        if(s[i]!=s[i-1]){
+            ans++;
 
         }
     }
     
 
-    cout<<ans<<ln;
+    dbg(ans)
+
+    int fans=ans;
+
+    int f1=0,f2=0;
+
+    
+
+    for(int i=1;i<n;i++){
+        if(s[i-1]=='1' and s[i]=='0'){
+            f1++;
+        }
+        if(s[i-1]=='0' and s[i]=='1'){
+            f2++;
+        }
+
+        if(f1>=2 or f2>=2){
+            fans=min(fans,ans-2);
+        }
+
+        if(s[i]!=s[i-1] and s[i-1]==s.back()){
+            fans=min(fans,ans-1);
+        }
+        if(s[0]=='1' and s.back()=='0'){
+            fans=min(fans,ans-1);
+        }
+        
 
 
+
+
+    }
+
+    if(n>1 and s[0]=='1' and f2){
+        fans=min(fans,ans-2);
+    }
+    if(n>1 and s[0]=='0' and f1){
+        fans=min(fans,ans-1);
+    }
+
+
+   
+    cout<<fans<<ln;
 }

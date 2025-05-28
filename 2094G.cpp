@@ -74,51 +74,58 @@ int32_t main(){ ios::sync_with_stdio(0);cin.tie(0);prec();run();}
 void _tc(){                         isTc=true;
 }
 void rky_cse(){
-    int n,m;cin>>n>>m;
+    int q; cin >> q;
+    vector<deque<int>> dq(2);
+    int f = 0;
+    int s1 = 0, s2 = 0;
+    int sz = 0;
 
-    map<int,int>mp;
-    vll a(n);
-    for(int i=0;i<n;i++){
-        cin>>a[i];
-        mp[a[i]]++;
-    }
+    while(q--){
 
-  
-    int ct=m;
-    int ans=0;
-    int cur=1;
-    
 
-    
 
-    if(mp.size()<m){
-        cout<<0<<ln;
-        return;
-    }
-
-    auto f=mp.begin();
-
-    for(auto it:mp){
-       
-        cur*=it.S;
-        cur%=mod;
-        ct--;
-        if(ct==0){
-            if(it.F-(f->F)<=m)ans=(ans+cur)%mod;
+        int t; cin>>t;
+        if(t == 3){
+            int x; cin>>x;
+            if(f == 0){
+                dq[0].push_back(x);
+                dq[1].push_front(x);
+            }
+            else{
+                dq[1].push_back(x);
+                dq[0].push_front(x);
+            }
+            sz++;
+            s2+=x;
+            s1+=sz*x;
+            dbg(dq)
+        }
+        else if(t == 2){
+            f^=1;
+            s1= s2*(sz+1)-s1;
+        }
+        else{
+            int x;
+            if(f == 0){
+                x = dq[0].back();
+                dq[0].pop_back();
+                dq[1].pop_front();
+                dq[0].push_front(x);
+                dq[1].push_back(x);
+                dbg(dq)
+            }
+            else{
+                x = dq[1].back();
+                dq[1].pop_back();
+                dq[0].pop_front();
+                dq[1].push_front(x);
+                dq[0].push_back(x);
+                dbg(dq)
+            }
+            s1+=s2;
+            s1-=sz*x;
             
         }
-        else if(ct<0){
-            cur=cur*modInverse(f->S,mod)%mod;
-            f++;
-            if(it.F-(f->F)<=m-1)ans=(ans+cur)%mod;
-            
-
-
-        }
+        cout<<s1<<ln;
     }
-    
-
-    cout<<ans<<ln;
-
-
 }

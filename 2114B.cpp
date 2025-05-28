@@ -74,51 +74,73 @@ int32_t main(){ ios::sync_with_stdio(0);cin.tie(0);prec();run();}
 void _tc(){                         isTc=true;
 }
 void rky_cse(){
-    int n,m;cin>>n>>m;
+    int n,k;cin>>n>>k;
 
-    map<int,int>mp;
-    vll a(n);
+    string s;cin>>s;
+
+    int c1=0,c0=0;
+
     for(int i=0;i<n;i++){
-        cin>>a[i];
-        mp[a[i]]++;
+        if(s[i]=='1')c1++;
+        else c0++;
     }
+    int mx=max(c1,c0);
+    int mn=min(c1,c0);
 
-  
-    int ct=m;
-    int ans=0;
-    int cur=1;
-    
+    dbg(mx,mn)
 
-    
+    int diff=mx-mn;
 
-    if(mp.size()<m){
-        cout<<0<<ln;
+
+    int ct=0;
+
+
+    // for(int i=0;i<n/2;i++){
+    //     if(ct<k){
+    //         if(mx>1){
+    //             mx-=2;
+    //             ct++;
+    //         }
+    //         else if(mn>1){
+    //             mn-=2;
+    //             ct++;
+    //         }
+    //         else{
+    //             no;
+    //             return;
+    //         }
+    //     }
+    //     else{
+    //         if(mx>0 and mn>0){
+    //             mx--;
+    //             mn--;
+    //         }
+    //         else{
+    //             no;
+    //             return;
+    //         }
+    //     }
+
+    // }
+
+
+    if(k<(diff)/2){
+        no;
+        return;
+    }
+    if((k-(diff/2))%2){
+        no;
         return;
     }
 
-    auto f=mp.begin();
-
-    for(auto it:mp){
-       
-        cur*=it.S;
-        cur%=mod;
-        ct--;
-        if(ct==0){
-            if(it.F-(f->F)<=m)ans=(ans+cur)%mod;
-            
-        }
-        else if(ct<0){
-            cur=cur*modInverse(f->S,mod)%mod;
-            f++;
-            if(it.F-(f->F)<=m-1)ans=(ans+cur)%mod;
-            
-
-
-        }
+    if(k>(n/2)){
+        no;
+        return;
     }
-    
 
-    cout<<ans<<ln;
+    yes;
+
+    
 
 
 }

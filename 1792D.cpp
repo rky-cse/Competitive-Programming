@@ -74,51 +74,35 @@ int32_t main(){ ios::sync_with_stdio(0);cin.tie(0);prec();run();}
 void _tc(){                         isTc=true;
 }
 void rky_cse(){
-    int n,m;cin>>n>>m;
-
-    map<int,int>mp;
-    vll a(n);
+    int n, m; cin >> n >> m;
+    vector<vector<int>> a(n, vector<int>(m));
     for(int i=0;i<n;i++){
-        cin>>a[i];
-        mp[a[i]]++;
-    }
-
-  
-    int ct=m;
-    int ans=0;
-    int cur=1;
-    
-
-    
-
-    if(mp.size()<m){
-        cout<<0<<ln;
-        return;
-    }
-
-    auto f=mp.begin();
-
-    for(auto it:mp){
-       
-        cur*=it.S;
-        cur%=mod;
-        ct--;
-        if(ct==0){
-            if(it.F-(f->F)<=m)ans=(ans+cur)%mod;
-            
-        }
-        else if(ct<0){
-            cur=cur*modInverse(f->S,mod)%mod;
-            f++;
-            if(it.F-(f->F)<=m-1)ans=(ans+cur)%mod;
-            
-
-
+        for(int j=0;j<m;j++){
+            cin >> a[i][j];
         }
     }
-    
-
-    cout<<ans<<ln;
-
-
+    set<vector<int>> sv;
+    for(int i=0;i<n;i++){
+        vector<int> inv(m);
+        for(int j=0;j<m;j++){
+            inv[a[i][j]-1] = j+1;
+        }
+        vector<int> tmp;
+        for(int k=0;k<m;k++){
+            tmp.pb(inv[k]);
+            sv.insert(tmp);
+        }
+    }
+    vector<int> ans(n,0);
+    for(int i=0;i<n;i++){
+        vector<int> tmp;
+        int best=0;
+        for(int k=0;k<m;k++){
+            tmp.pb(a[i][k]);
+            if(sv.count(tmp)) best=k+1;
+        }
+        ans[i]=best;
+    }
+    for(auto x: ans) cout << x << " ";
+    cout << ln;
 }
